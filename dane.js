@@ -7,6 +7,8 @@
 window.DANE = {
 
   organizatorka: 'Adusia',
+  // Numer, na który przychodzą listy do Mikołaja SMS-em
+  telefon: '+48793367688',
 
   // Budżet na prezent — pokazuje się po odkryciu, kogo się wylosowało
   budzet: 'do 200 zł',

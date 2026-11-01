@@ -170,6 +170,8 @@
   .drinks{margin-top:16px;text-align:center;font-family:Fraunces,serif;font-size:20px;font-weight:700;color:var(--red);padding:14px;border:2px dashed var(--gold);border-radius:14px;background:#fff}
   .budget{margin-top:14px;background:#fff6e0;border:2px solid var(--gold);border-radius:12px;padding:12px 14px;font-size:15px;line-height:1.45}
   .budget b{display:block;font-family:Fraunces,serif;font-size:20px;color:var(--red)}
+  .btnlink{display:block;text-align:center;text-decoration:none;font-weight:600;font-size:15px;border-radius:10px;padding:14px 16px;background:var(--red);color:#fff;margin-top:18px}
+  .btnlink:hover{background:var(--red2)}
   .hidden{display:none !important}
 </style>
 </head>
@@ -286,8 +288,9 @@
       <div id="listMsg" class="msg"></div>
       <button class="block" id="makeList">Zapakuj list ✉️</button>
       <div id="listOut" class="hidden">
-        <div class="msg ok" style="display:block">✉️ List zapieczętowany! Ostatni krok: <b>wyślij go Adusi</b>. Kliknij przycisk poniżej i wybierz Messengera, SMS albo WhatsAppa.</div>
-        <button class="block" id="shareList">📤 Wyślij list Adusi</button>
+        <div class="msg ok" style="display:block">✉️ List zapieczętowany! Ostatni krok: <b>wyślij go Adusi SMS-em</b>. Kliknij przycisk, a potem w telefonie tylko „Wyślij”.</div>
+        <a class="block btnlink" id="smsList" href="#">📱 Wyślij SMS do Adusi</a>
+        <button class="ghost block" id="shareList" style="margin-top:10px">Wolę Messengera / WhatsAppa</button>
         <details><summary>Pokaż zapieczętowany list (kod)</summary>
           <div class="codebox" id="listCode"></div>
           <button class="ghost block" id="copyList" style="margin-top:10px">Kopiuj kod listu</button>
@@ -533,12 +536,17 @@
     if(!w.length){$('listMsg').className='msg err';$('listMsg').textContent='Pusty list? Mikołaj nie czyta w myślach. Wpisz chociaż jedno życzenie.';return;}
     $('listMsg').className='msg';
     $('listCode').textContent=await encode(T_LIST,[name,w.join('\n').slice(0,600),nope]);
-    $('listOut').classList.remove('hidden');$('makeList').textContent='Popraw i zapakuj ponownie ✉️';
+    $('listOut').classList.remove('hidden');$('makeList').textContent='Popraw i zapakuj ponownie ✉️';setSms();
     $('listOut').scrollIntoView({behavior:'smooth',block:'center'});
   };
   $('copyList').onclick=function(){copy($('listCode').textContent,this);};
+  function listText(){return '📜 Mój list do Mikołaja ('+$('lName').value+'):\n'+$('listCode').textContent;}
+  function setSms(){const tel=(window.DANE&&window.DANE.telefon)||'';const a=$('smsList');
+    if(!tel){a.classList.add('hidden');return;}a.classList.remove('hidden');
+    a.href='sms:'+tel+'?&body='+encodeURIComponent(listText());}
+  $('smsList').addEventListener('click',()=>{if(!/Android|iPhone|iPad|iPod/i.test(navigator.userAgent))toast('SMS działa z telefonu. Na komputerze użyj przycisku poniżej.');});
   $('shareList').onclick=async function(){
-    const text='📜 Mój list do Mikołaja ('+$('lName').value+'):\n'+$('listCode').textContent;
+    const text=listText();
     if(navigator.share){try{await navigator.share({text});toast('Wysłane? Super! Elf odhacza ✅');return;}catch(e){if(e&&e.name==='AbortError')return;}}
     copy(text,this);toast('Skopiowane! Wklej to w wiadomości do Adusi 📩');
   };
