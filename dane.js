@@ -46,20 +46,8 @@ window.DANE = {
     ],
   },
 
-  // CO KTO PRZYNOSI — wpisz w co: '...', np. co: 'pierogi z kapustą i sernik'
-  jedzenie: [
-    { imie: 'Adusia',    co: '' },
-    { imie: 'Karolinka', co: '' },
-    { imie: 'Anitka',    co: '' },
-    { imie: 'Kludysia',  co: '' },
-    { imie: 'Lusia',     co: '' },
-    { imie: 'Agniesia',  co: '' },
-    { imie: 'Martynka',  co: '' },
-    { imie: 'Pawcia',    co: '' },
-    { imie: 'Ania',      co: '' },
-    { imie: 'Laurka',    co: '' },
-    { imie: 'Patka',     co: '' },
-  ],
+  // CO KTO PRZYNOSI — lista jest w pliku jedzenie.json, edytujesz ją w Panelu organizatorki
+  repo: 'adriannaszyszko-dotcom/swieta-szabliniakow',
 
   // QUIZ — odpowiedzi: lista możliwości, poprawna: numer poprawnej odpowiedzi (liczone od 1)
   quiz: [

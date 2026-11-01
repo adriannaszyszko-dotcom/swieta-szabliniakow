@@ -384,6 +384,21 @@
       <div class="note">⚠️ Nie wpisuj cudzych kodów, bo zobaczysz cudzy wynik (a elfy wszystko widzą). Nowe losowanie = nowe kody, stare idą do kosza.</div>
       <button class="ghost block" id="copyAll">Skopiuj wszystkie kody naraz (imię + kod)</button>
     </div>
+    <div class="card">
+      <h2>6. Co kto przynosi</h2>
+      <p class="sub">To, co tu wpiszesz i zapiszesz, zobaczą wszyscy w sekcji „Co kto przynosi” (po około minucie).</p>
+      <div id="tokBox">
+        <div class="note" style="margin-top:0">🔑 Żeby zapisywać, potrzebny jest jednorazowy klucz GitHub. Zostaje tylko na tym urządzeniu.</div>
+        <label for="tokIn">Klucz GitHub</label>
+        <input id="tokIn" type="password" placeholder="github_pat_…" autocomplete="off">
+        <button class="ghost small" id="tokSave" style="margin-top:8px">Zapamiętaj klucz</button>
+      </div>
+      <div id="tokOk" class="hint hidden">🔑 Klucz zapamiętany na tym urządzeniu. <button class="ghost small" id="tokDel" style="margin-left:6px">Zmień klucz</button></div>
+      <div id="foodEdit"></div>
+      <div id="foodMsg" class="msg"></div>
+      <button class="block" id="foodSave">💾 Zapisz na stronie</button>
+    </div>
+
   </section>
 </div>
 
@@ -730,11 +745,16 @@
   $('planAddr').innerHTML=D.plan&&D.plan.adres?'📍 '+esc(D.plan.adres)+(/\d/.test(D.plan.adres)?` · <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(D.plan.adres)}">mapa</a>`:''):'';
   $('planList').innerHTML=(D.plan&&D.plan.harmonogram||[]).map(x=>`<li><span class="t">${esc(x.godzina||'')}</span><span>${esc(x.co||'')}</span></li>`).join('');
 
-  // menu: lista kobiet z dane.js, uzupełnia organizatorka
-  const FOOD=D.jedzenie||[];
+  // menu: lista z jedzenie.json (uzupełnia organizatorka w panelu)
   const DISHES=[['barszcz',/barszcz/],['uszka',/uszk/],['pierogi',/pierog|pierożk/],['karp',/karp/],['ryba po grecku',/grecku/],['śledzie',/śled[zź]/],['kapusta z grochem',/kapust/],['sałatka jarzynowa',/sałat/],['kutia',/kuti/],['makowiec',/makow/],['sernik',/sernik/],['kompot z suszu',/kompot/]];
   const NONE=['jeszcze nie wiadomo','tajemnica kuchni','elfy czekają','wkrótce…'];
-  (function(){
+  const ladies=()=>(D.rodzina||[]).filter(p=>p.plec==='k').map(p=>p.imie);
+  async function fetchFood(){
+    try{const r=await fetch('jedzenie.json?t='+Date.now(),{cache:'no-store'});if(!r.ok)throw 0;const j=await r.json();if(Array.isArray(j))return j;}catch(e){}
+    return null;
+  }
+  function mergeFood(list){const m={};(list||[]).forEach(f=>m[f.imie]=f.co||'');return ladies().map(l=>({imie:l,co:m[l]||''}));}
+  function renderFood(FOOD){
     const n=FOOD.filter(f=>f.co).length;
     $('menuSum').textContent=`Ustalone: ${n} z ${FOOD.length}`;
     $('menuBar').style.width=(FOOD.length?n/FOOD.length*100:0)+'%';
@@ -745,7 +765,41 @@
       :!missing.length?'Wszystkie 12 klasyków na stole! Elf odpina pasek o jedną dziurkę.'
       :missing.length<=3?'Prawie komplet! Brakuje tylko: '+missing.join(', ')+'.'
       :'Na stole przydałby się jeszcze np.: '+shuffle(missing).slice(0,4).join(', ')+'.';
-  })();
+  }
+  async function showFood(){renderFood(mergeFood(await fetchFood()));}
+  renderFood(mergeFood([]));
+  document.addEventListener('click',e=>{if(e.target.closest('[data-go="v-menu"]'))showFood();if(e.target.closest('[data-go="v-org"]'))loadOrgFood();});
+
+  // panel: edycja jedzenia i zapis na GitHubie
+  const TOKKEY='szabliniacy-gh';
+  const getTok=()=>{try{return localStorage.getItem(TOKKEY)||''}catch(e){return ''}};
+  function renderTok(){const t=getTok();$('tokBox').classList.toggle('hidden',!!t);$('tokOk').classList.toggle('hidden',!t);}
+  $('tokSave').onclick=()=>{const v=$('tokIn').value.trim();if(!v){toast('Wklej klucz.');return;}try{localStorage.setItem(TOKKEY,v)}catch(e){toast('Ta przeglądarka nie pozwala zapamiętać klucza.');return;}$('tokIn').value='';renderTok();toast('Klucz zapamiętany na tym urządzeniu 🔑');};
+  $('tokDel').onclick=()=>{try{localStorage.removeItem(TOKKEY)}catch(e){}renderTok();};
+  async function loadOrgFood(){
+    renderTok();
+    const list=mergeFood(await fetchFood());
+    $('foodEdit').innerHTML=list.map(f=>`<label>${esc(f.imie)} przynosi…</label><input data-food="${esc(f.imie)}" value="${esc(f.co)}" placeholder="np. pierogi z kapustą">`).join('');
+  }
+  const b64=str=>{const by=new TextEncoder().encode(str);let s='';by.forEach(x=>s+=String.fromCharCode(x));return btoa(s);};
+  $('foodSave').onclick=async function(){
+    const tok=getTok(),m=$('foodMsg');
+    if(!tok){m.className='msg err';m.textContent='Najpierw wklej klucz GitHub (powyżej).';return;}
+    const data=[...document.querySelectorAll('[data-food]')].map(i=>({imie:i.dataset.food,co:i.value.trim()}));
+    const repo=D.repo||'adriannaszyszko-dotcom/swieta-szabliniakow',url=`https://api.github.com/repos/${repo}/contents/jedzenie.json`;
+    const H={Authorization:'Bearer '+tok,Accept:'application/vnd.github+json'};
+    this.disabled=true;this.textContent='Zapisuję…';m.className='msg';
+    try{
+      let sha;const g=await fetch(url+'?t='+Date.now(),{headers:H});
+      if(g.status===401||g.status===403)throw new Error('klucz');
+      if(g.ok)sha=(await g.json()).sha;
+      const r=await fetch(url,{method:'PUT',headers:H,body:JSON.stringify({message:'Menu: aktualizacja z panelu organizatorki',content:b64(JSON.stringify(data,null,2)+'\n'),sha})});
+      if(r.status===401||r.status===403)throw new Error('klucz');
+      if(!r.ok)throw new Error('inny');
+      m.className='msg ok';m.textContent='Zapisane! Za około minutę wszyscy zobaczą zmiany na stronie. 🎄';
+    }catch(e){m.className='msg err';m.textContent=e.message==='klucz'?'GitHub nie przyjął klucza. Mógł wygasnąć albo ma złe uprawnienia. Kliknij „Zmień klucz” i wklej nowy.':'Nie udało się zapisać. Sprawdź internet i spróbuj jeszcze raz.';}
+    this.disabled=false;this.textContent='💾 Zapisz na stronie';
+  };
 
   // losowania na żywo
   const fam=D.rodzina||[];
