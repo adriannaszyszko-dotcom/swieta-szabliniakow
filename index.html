@@ -226,10 +226,9 @@
     <button class="back" data-go="v-start">← Wróć</button>
     <div class="card">
       <h2>Co kto przynosi 🥟</h2>
-      <p class="sub">Kliknij swoje imię i wpisz, co przygotujesz. Zmienić zdanie można zawsze (do 23 grudnia, potem babcia się denerwuje).</p>
+      <p class="sub">Chcesz coś zmienić albo dopisać? Napisz do Adusi. Zmieniać zdanie można do 23 grudnia, potem babcia się denerwuje.</p>
       <p class="sub" id="menuSum" style="margin-bottom:4px"></p>
       <div class="bar"><i id="menuBar" style="width:0"></i></div>
-      <div id="menuMsg" class="msg"></div>
       <div id="menuList"></div>
       <div class="elf"><div class="face">🧝</div><div><b>Elf-kucharz</b><span id="menuElf">Elf zagląda do garnków…</span></div></div>
       <div class="drinks">🍷 Panowie zadbają o napoje</div>
@@ -731,54 +730,22 @@
   $('planAddr').innerHTML=D.plan&&D.plan.adres?'📍 '+esc(D.plan.adres)+(/\d/.test(D.plan.adres)?` · <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(D.plan.adres)}">mapa</a>`:''):'';
   $('planList').innerHTML=(D.plan&&D.plan.harmonogram||[]).map(x=>`<li><span class="t">${esc(x.godzina||'')}</span><span>${esc(x.co||'')}</span></li>`).join('');
 
-  // menu: kobiety same wpisują, co przynoszą (zapis w arkuszu Google)
-  const LADIES=(D.rodzina||[]).filter(p=>p.plec==='k').map(p=>p.imie);
-  const API=D.jedzenieUrl||'';
-  let food={};let openLady='';
+  // menu: lista kobiet z dane.js, uzupełnia organizatorka
+  const FOOD=D.jedzenie||[];
   const DISHES=[['barszcz',/barszcz/],['uszka',/uszk/],['pierogi',/pierog|pierożk/],['karp',/karp/],['ryba po grecku',/grecku/],['śledzie',/śled[zź]/],['kapusta z grochem',/kapust/],['sałatka jarzynowa',/sałat/],['kutia',/kuti/],['makowiec',/makow/],['sernik',/sernik/],['kompot z suszu',/kompot/]];
-  function foodElf(){
-    const all=Object.values(food).map(x=>(x.co||'').toLowerCase()).join(' | ');
-    const missing=DISHES.filter(([,r])=>!r.test(all)).map(([n])=>n);
-    const n=LADIES.filter(l=>food[l]&&food[l].co).length;
-    if(!n)return 'Na razie stół jest pusty. Elf zaczyna się martwić, że Wigilia będzie o chlebie i opłatku.';
-    if(!missing.length)return 'Wszystkie 12 klasyków zaklepane! Elf odpina pasek o jedną dziurkę.';
-    if(missing.length<=3)return 'Prawie komplet! Brakuje tylko: '+missing.join(', ')+'.';
-    return 'Na stole przydałby się jeszcze np.: '+shuffle(missing).slice(0,4).join(', ')+'. Ochotniczki mile widziane!';
-  }
-  const SAVED=[[/pierog/,'Pierogi! Elf już zaklepał sobie pięć. No dobra, dziesięć.'],[/sernik/,'Sernik zgłoszony. Diety oficjalnie odwołane.'],[/karp/,'Karp przyjęty. Karp nieco mniej zadowolony.'],[/barszcz/,'Barszcz! Bez niego to nie Wigilia, tylko kolacja.'],[/makow/,'Makowiec! Babcia skinęła głową z aprobatą.'],[/śled/,'Śledzie zgłoszone. Wujkowie wiedzą, co z tym zrobić.'],[/sałat/,'Sałatka jarzynowa: królowa każdego stołu i każdego dnia po świętach.'],[/kuti/,'Kutia! Rzadki skarb. Elf się wzruszył.'],[/kup|sklep/,'Kupne też się liczy. Elf nikomu nie powie. Babci zwłaszcza.']];
-  function renderMenu(){
-    const n=LADIES.filter(l=>food[l]&&food[l].co).length;
-    $('menuSum').textContent=`Zgłoszone: ${n} z ${LADIES.length}`;
-    $('menuBar').style.width=(LADIES.length?n/LADIES.length*100:0)+'%';
-    $('menuList').innerHTML=LADIES.map(l=>{const f=food[l]&&food[l].co;
-      return `<div class="lady${openLady===l?' open':''}" data-l="${esc(l)}"><button class="head"><div><div class="nm">${esc(l)}</div>${f?`<div class="what">🍽️ ${esc(f)}</div>`:`<div class="none">jeszcze nic nie wpisała</div>`}</div><span class="pen">✏️</span></button>
-        <div class="ed"><textarea placeholder="np. pierogi z kapustą i grzybami, sernik">${esc(f||'')}</textarea><button class="block small" style="margin-top:8px">Zapisz</button></div></div>`;}).join('');
-    document.querySelectorAll('.lady').forEach(el=>{const l=el.dataset.l;
-      el.querySelector('.head').onclick=()=>{if(!API){menuNote();return;}openLady=openLady===l?'':l;renderMenu();const ta=document.querySelector('.lady.open textarea');if(ta)ta.focus();};
-      el.querySelector('.ed button').onclick=async function(){const co=el.querySelector('textarea').value.trim().slice(0,200);
-        this.disabled=true;this.textContent='Zapisuję…';
-        try{await saveFood(l,co);openLady='';
-          const t=co.toLowerCase();toast(co?((SAVED.find(([r])=>r.test(t))||[0,pick(['Zapisane! Elf dopisał do menu ✍️','Zapisane! Stół już się ugina 🎄','Zapisane! Babcia będzie dumna 👵'])])[1]):'Usunięte. Elf udaje, że nie widział.');}
-        catch(e){toast('Nie udało się zapisać. Sprawdź internet i spróbuj jeszcze raz.');this.disabled=false;this.textContent='Zapisz';return;}
-        renderMenu();};
-    });
-    $('menuElf').textContent=foodElf();
-  }
-  function menuNote(){const m=$('menuMsg');m.className='msg err';m.textContent='Wpisywanie jeszcze nie działa. Organizatorka właśnie je podłącza. Wróć tu za chwilę!';}
-  async function loadFood(){
-    if(!API){renderMenu();menuNote();return;}
-    $('menuMsg').className='msg';
-    try{const ctl=new AbortController();const t=setTimeout(()=>ctl.abort(),10000);
-      const r=await fetch(API,{signal:ctl.signal});clearTimeout(t);food=await r.json()||{};}
-    catch(e){const m=$('menuMsg');m.className='msg err';m.textContent='Nie udało się wczytać menu. Sprawdź internet i odśwież stronę.';}
-    renderMenu();
-  }
-  async function saveFood(imie,co){
-    const r=await fetch(API,{method:'POST',body:JSON.stringify({imie,co})});
-    const data=await r.json();if(!data||typeof data!=='object')throw new Error('bad');food=data;
-  }
-  renderMenu();
-  document.addEventListener('click',e=>{if(e.target.closest('[data-go="v-menu"]'))loadFood();});
+  const NONE=['jeszcze nie wiadomo','tajemnica kuchni','elfy czekają','wkrótce…'];
+  (function(){
+    const n=FOOD.filter(f=>f.co).length;
+    $('menuSum').textContent=`Ustalone: ${n} z ${FOOD.length}`;
+    $('menuBar').style.width=(FOOD.length?n/FOOD.length*100:0)+'%';
+    $('menuList').innerHTML=FOOD.map(f=>`<div class="lady"><div class="head" style="cursor:default"><div><div class="nm">${esc(f.imie)} przynosi…</div>${f.co?`<div class="what">🍽️ ${esc(f.co)}</div>`:`<div class="none">${pick(NONE)}</div>`}</div></div></div>`).join('');
+    const all=FOOD.map(f=>(f.co||'').toLowerCase()).join(' | ');
+    const missing=DISHES.filter(([,r])=>!r.test(all)).map(([x])=>x);
+    $('menuElf').textContent=!n?'Na razie stół jest pusty. Elf zaczyna się martwić, że Wigilia będzie o chlebie i opłatku.'
+      :!missing.length?'Wszystkie 12 klasyków na stole! Elf odpina pasek o jedną dziurkę.'
+      :missing.length<=3?'Prawie komplet! Brakuje tylko: '+missing.join(', ')+'.'
+      :'Na stole przydałby się jeszcze np.: '+shuffle(missing).slice(0,4).join(', ')+'.';
+  })();
 
   // losowania na żywo
   const fam=D.rodzina||[];

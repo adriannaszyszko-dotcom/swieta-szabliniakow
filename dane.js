@@ -6,7 +6,7 @@
 
 window.DANE = {
 
-  organizatorka: 'Ada',
+  organizatorka: 'Adusia',
 
   // Kiedy Wigilia (rok-miesiąc-dzień T godzina:minuta) — do tego liczy odliczanie
   wigilia: '2026-12-24T19:00',
@@ -46,8 +46,20 @@ window.DANE = {
     ],
   },
 
-  // CO KTO PRZYNOSI — adres arkusza Google (wkleja Claude po podłączeniu)
-  jedzenieUrl: '',
+  // CO KTO PRZYNOSI — wpisz w co: '...', np. co: 'pierogi z kapustą i sernik'
+  jedzenie: [
+    { imie: 'Adusia',    co: '' },
+    { imie: 'Karolinka', co: '' },
+    { imie: 'Anitka',    co: '' },
+    { imie: 'Kludysia',  co: '' },
+    { imie: 'Lusia',     co: '' },
+    { imie: 'Agniesia',  co: '' },
+    { imie: 'Martynka',  co: '' },
+    { imie: 'Pawcia',    co: '' },
+    { imie: 'Ania',      co: '' },
+    { imie: 'Laurka',    co: '' },
+    { imie: 'Patka',     co: '' },
+  ],
 
   // QUIZ — odpowiedzi: lista możliwości, poprawna: numer poprawnej odpowiedzi (liczone od 1)
   quiz: [
