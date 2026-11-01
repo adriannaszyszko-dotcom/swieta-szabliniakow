@@ -8,6 +8,9 @@ window.DANE = {
 
   organizatorka: 'Adusia',
 
+  // Budżet na prezent — pokazuje się po odkryciu, kogo się wylosowało
+  budzet: 'do 200 zł',
+
   // Kiedy Wigilia (rok-miesiąc-dzień T godzina:minuta) — do tego liczy odliczanie
   wigilia: '2026-12-24T19:00',
 

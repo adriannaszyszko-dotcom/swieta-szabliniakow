@@ -168,6 +168,8 @@
   .lady.open .ed{display:block}
   .lady .ed textarea{min-height:70px;font-size:15px}
   .drinks{margin-top:16px;text-align:center;font-family:Fraunces,serif;font-size:20px;font-weight:700;color:var(--red);padding:14px;border:2px dashed var(--gold);border-radius:14px;background:#fff}
+  .budget{margin-top:14px;background:#fff6e0;border:2px solid var(--gold);border-radius:12px;padding:12px 14px;font-size:15px;line-height:1.45}
+  .budget b{display:block;font-family:Fraunces,serif;font-size:20px;color:var(--red)}
   .hidden{display:none !important}
 </style>
 </head>
@@ -315,6 +317,7 @@
         <div class="relhead hidden" id="relHead"></div>
         <p class="quip" id="quip"></p>
         <div class="elf" id="intel" style="text-align:left"><div class="face">🕵️</div><div><b>Tajne informacje od elfów</b><span id="intelTxt"></span></div></div>
+        <div class="budget" id="budget"></div>
         <div class="wishes" id="wishBox"></div>
         <p class="sub" style="margin-top:14px">Ciii… to zostaje między nami 🤫</p>
         <button class="ghost small" data-go="v-start">Zamknij</button>
@@ -464,7 +467,7 @@
   };
   const DIRECT_HEAD=['🎯 Trafiło na {twojA} {a}!','🎯 Los chciał, że to {twojN} {n}!','🎯 Uwaga, uwaga: {twojN} {n}!'];
   const INVERSE=['Dla tej osoby jesteś {i}. Reputacja zobowiązuje!','Wylosowałeś/aś kogoś, dla kogo jesteś {i}. Teraz pokaż, że to nie przypadek.','Dla niej/niego jesteś {i}. Prezent musi być na poziomie legendy rodzinnej.'];
-  const CLOSERS=['Paragon zachowaj. Tak na wszelki wypadek.','Elfy będą obserwować.','Budżet rozsądny, fantazja nieograniczona.','Pakowanie w gazetę też się liczy. Ledwo.','Pamiętaj: liczy się gest. I żeby nie były to skarpetki.'];
+  const CLOSERS=['Paragon zachowaj. Tak na wszelki wypadek.','Elfy będą obserwować.','Pakowanie w gazetę też się liczy. Ledwo.','Pamiętaj: liczy się gest. I żeby nie były to skarpetki.'];
   const ADDED=['Dodano! Rodzina rośnie 🎄','Kolejna osoba w drużynie prezentowej 🎁','Elfy przyjęły zgłoszenie ✅','Dodano. Krzesło przy stole dostawione 🪑','Dodano. Kolejna porcja pierogów potrzebna 🥟'];
 
   function wishLines(t){return t.split(/\n+/).map(s=>s.replace(/^[-•*\d.)\s]+/,'').trim()).filter(Boolean);}
@@ -551,6 +554,9 @@
     else if(inverse&&ROLES[inverse])quip=pick(INVERSE).replace('{i}',ROLES[inverse].i);
     else if(roles.length)quip=pick(ROLES[pick(roles)].q);
     else quip=pick(ROLES.inna.q);
+    const bud=(window.DANE&&window.DANE.budzet)||'';
+    $('budget').classList.toggle('hidden',!bud);
+    $('budget').innerHTML=bud?`<b>💰 Budżet: ${esc(bud)}</b>${pick(['Ani złotówki więcej, bo zrobi się niezręcznie.','Tak, opakowanie też się wlicza. Kokardka nie.','Kto przekroczy budżet, zmywa poza kolejką 🧽','Elfy liczą. Elfy mają kalkulator.'])}`:'';
     $('relHead').textContent=head;$('relHead').classList.toggle('hidden',!head);
     $('whoRole').textContent=roles.length?'W rodzinie: '+[...new Set(roles.map(k=>ROLES[k].n))].join(' · '):'';
     $('quip').textContent=quip+' '+pick(CLOSERS);
