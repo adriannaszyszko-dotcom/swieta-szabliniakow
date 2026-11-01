@@ -9,35 +9,44 @@ window.DANE = {
   organizatorka: 'Ada',
 
   // Kiedy Wigilia (rok-miesiąc-dzień T godzina:minuta) — do tego liczy odliczanie
-  wigilia: '2026-12-24T17:00',
+  wigilia: '2026-12-24T19:00',
 
   // RODZINA — plec: 'k' (kobieta) albo 'm' (mężczyzna).
   // Kobiety biorą udział w losowaniu „kto zmywa”, mężczyźni w losowaniu Mikołaja.
   rodzina: [
-    { imie: 'Ada',     plec: 'k' },
-    { imie: 'Patryk',  plec: 'm' },
-    { imie: 'Mama',    plec: 'k' },
-    { imie: 'Tata',    plec: 'm' },
-    { imie: 'Babcia',  plec: 'k' },
-    { imie: 'Dziadek', plec: 'm' },
-    { imie: 'Ciocia',  plec: 'k' },
-    { imie: 'Wujek',   plec: 'm' },
+    { imie: 'Adusia',     plec: 'k' },
+    { imie: 'Patryczek',  plec: 'm' },
+    { imie: 'Karolinka',  plec: 'k' },
+    { imie: 'Marcinek',   plec: 'm' },
+    { imie: 'Anitka',     plec: 'k' },
+    { imie: 'Kludysia',   plec: 'k' },
+    { imie: 'Lusia',      plec: 'k' },
+    { imie: 'Dareczek',   plec: 'm' },
+    { imie: 'Agniesia',   plec: 'k' },
+    { imie: 'Hubi',       plec: 'm' },
+    { imie: 'Martynka',   plec: 'k' },
+    { imie: 'Bartuś',     plec: 'm' },
+    { imie: 'Pawcia',     plec: 'k' },
+    { imie: 'Szymonek',   plec: 'm' },
+    { imie: 'Ania',       plec: 'k' },
+    { imie: 'Laurka',     plec: 'k' },
+    { imie: 'Patka',      plec: 'k' },
   ],
 
   // PLAN DNIA
   plan: {
-    adres: 'Adres do uzupełnienia',
+    adres: 'U Babci Basi',
     harmonogram: [
-      { godzina: '15:00', co: 'Zbiórka i ostatnie poprawki przy stole' },
-      { godzina: '16:30', co: 'Wszyscy na miejscu, kurtki na łóżko' },
-      { godzina: '17:00', co: 'Pierwsza gwiazdka, opłatek i życzenia' },
-      { godzina: '17:30', co: 'Kolacja wigilijna (12 potraw, 0 diet)' },
-      { godzina: '19:00', co: 'Mikołaj i prezenty 🎅' },
-      { godzina: '20:00', co: 'Kolędy, ciasto, quiz rodzinny' },
+      { godzina: '18:30', co: 'Przyjazd do Babci Basi, kurtki na łóżko' },
+      { godzina: '19:00', co: 'Pierwsza gwiazdka, opłatek i życzenia' },
+      { godzina: '19:30', co: 'Kolacja wigilijna (12 potraw, 0 diet)' },
+      { godzina: '21:00', co: 'Mikołaj i prezenty 🎅' },
+      { godzina: '21:30', co: 'Losowanie, kto zmywa 🧽' },
+      { godzina: '22:00', co: 'Kolędy, ciasto, quiz rodzinny' },
     ],
     // Kto po kogo jedzie
     transport: [
-      { kierowca: 'Patryk', zabiera: 'Babcia, Dziadek', wyjazd: '15:45' },
+      // przykład: { kierowca: 'Patryczek', zabiera: 'Lusia, Dareczek', wyjazd: '18:00' },
     ],
   },
 
@@ -72,10 +81,10 @@ window.DANE = {
       odpowiedzi: ['Dla zbłąkanego wędrowca', 'Dla Mikołaja', 'Na wypadek, gdyby wujek przyprowadził kolegę', 'Żeby był łokieć na stole'], poprawna: 1,
       komentarz: 'Dla niespodziewanego gościa. Wujek i jego kolega niech dostawią krzesło.' },
     { pytanie: 'PRZYKŁAD do podmiany: Kto w zeszłym roku zasnął pierwszy po kolacji?',
-      odpowiedzi: ['Dziadek', 'Wujek', 'Tata', 'Wszyscy naraz'], poprawna: 1,
+      odpowiedzi: ['Dareczek', 'Marcinek', 'Patryczek', 'Wszyscy naraz'], poprawna: 1,
       komentarz: 'Zasnął z pilotem w ręku. Nikt nie odważył się go zabrać.' },
     { pytanie: 'PRZYKŁAD do podmiany: Kto zjadł najwięcej pierogów?',
-      odpowiedzi: ['Patryk', 'Wujek', 'Babcia (ona tylko „próbowała”)', 'Pies, pod stołem'], poprawna: 2,
+      odpowiedzi: ['Szymonek', 'Hubi', 'Babcia Basia (ona tylko „próbowała”)', 'Pies, pod stołem'], poprawna: 2,
       komentarz: 'Oficjalnie 14. Nieoficjalnie elfy straciły rachubę.' },
   ],
 };

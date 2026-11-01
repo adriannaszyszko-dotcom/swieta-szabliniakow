@@ -716,7 +716,7 @@
   tick();setInterval(tick,1000);
 
   // plan
-  $('planAddr').innerHTML=D.plan&&D.plan.adres?'📍 '+esc(D.plan.adres)+` · <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(D.plan.adres)}">mapa</a>`:'';
+  $('planAddr').innerHTML=D.plan&&D.plan.adres?'📍 '+esc(D.plan.adres)+(/\d/.test(D.plan.adres)?` · <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(D.plan.adres)}">mapa</a>`:''):'';
   $('planList').innerHTML=(D.plan&&D.plan.harmonogram||[]).map(x=>`<li><span class="t">${esc(x.godzina||'')}</span><span>${esc(x.co||'')}</span></li>`).join('');
   const cars=(D.plan&&D.plan.transport)||[];
   $('carList').innerHTML=cars.length?cars.map(c=>`<div class="car">🚗 <b>${esc(c.kierowca)}</b> zabiera: ${esc(c.zabiera)}${c.wyjazd?`<br><span class="meta">Wyjazd: ${esc(c.wyjazd)}</span>`:''}</div>`).join(''):`<p class="sub">Jeszcze nic nie ustalone. Potrzebujesz podwózki? Napisz do: ${esc(ORG)}.</p>`;
@@ -787,7 +787,8 @@
   document.addEventListener('click',e=>{const b=e.target.closest('[data-go="v-quiz"]');if(b)quizStart();});
 
   // panel: wczytaj rodzinę z pliku, jeśli pusto
-  if(!state.people.length&&fam.length){state.people=fam.map(p=>({name:p.imie,trait:'',wishes:'',nope:''}));save();}
+  const untouched=state.people.every(p=>!p.wishes&&!p.trait)&&!(state.rels||[]).length&&!(state.excl||[]).length;
+  if(fam.length&&(!state.people.length||(untouched&&state.people.map(p=>p.name).join()!==fam.map(p=>p.imie).join()))){state.people=fam.map(p=>({name:p.imie,trait:'',wishes:'',nope:''}));save();}
 
   renderAll();fromHash();
 })();
