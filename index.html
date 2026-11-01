@@ -261,8 +261,8 @@
     <div class="card">
       <h2>List do Mikołaja</h2>
       <p class="sub">Osoba, która Cię wylosuje, zobaczy tę listę. Kto nie napisze, ten dostanie skarpetki. Tak mówi tradycja.</p>
-      <label for="lName">Twoje imię (tak jak wpisała je organizatorka)</label>
-      <input id="lName" placeholder="np. Wujek Mietek" maxlength="30">
+      <label for="lName">Kim jesteś?</label>
+      <select id="lName"></select>
       <label for="lWish">Moje życzenia (każde w nowej linii)</label>
       <textarea id="lWish" placeholder="Książka o pszczołach&#10;Dobra kawa ziarnista&#10;Święty spokój (wiem, że się nie da)"></textarea>
       <label for="lNope">Czego absolutnie NIE chcę</label>
@@ -495,7 +495,7 @@
   $('lNope').addEventListener('input',()=>{clearTimeout(elfT);elfT=setTimeout(updElf,500);});
   $('makeList').onclick=async()=>{
     const name=$('lName').value.trim().replace(/\u0001/g,''),w=wishLines($('lWish').value.replace(/\u0001/g,'')),nope=$('lNope').value.trim().replace(/\u0001/g,'');
-    if(!name){$('listMsg').className='msg err';$('listMsg').textContent='Mikołaj musi wiedzieć, od kogo jest list. Wpisz imię.';return;}
+    if(!name){$('listMsg').className='msg err';$('listMsg').textContent='Mikołaj musi wiedzieć, od kogo jest list. Wybierz siebie z listy.';return;}
     if(!w.length){$('listMsg').className='msg err';$('listMsg').textContent='Pusty list? Mikołaj nie czyta w myślach. Wpisz chociaż jedno życzenie.';return;}
     $('listMsg').className='msg';
     $('listCode').textContent=await encode(T_LIST,[name,w.join('\n').slice(0,600),nope]);
@@ -693,6 +693,9 @@
   const D=window.DANE||{rodzina:[],plan:{harmonogram:[],transport:[]},menu:[],quiz:[]};
   const ORG=D.organizatorka||'organizatorki';
 
+  // wybór osoby w liście do Mikołaja
+  $('lName').innerHTML='<option value="">Wybierz swoje imię…</option>'+(D.rodzina||[]).map(p=>`<option>${esc(p.imie)}</option>`).join('');
+  $('lName').addEventListener('change',()=>{if($('lName').value)toast(pick([`Cześć, ${$('lName').value}! Elf już ostrzy ołówek ✏️`,`${$('lName').value}? Elfy mają Cię na liście grzecznych. Chyba.`,`Witaj, ${$('lName').value}! Pisz śmiało, Mikołaj nie ocenia. Elfy trochę tak.`]));});
   // odliczanie
   const target=new Date(D.wigilia||'2026-12-24T17:00');
   const pad=n=>String(n).padStart(2,'0');
