@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Boże Narodzenie u Szabliniaków</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700;9..144,900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0f2a22; --card:#fbf7ef; --ink:#1d2a25; --muted:#6b756f;
+    --red:#b8322e; --red2:#9a2623; --gold:#d8a64a; --line:#e6dfd1; --green:#2d6a4f;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{
+    font-family:Inter,system-ui,sans-serif; color:var(--ink);
+    background:radial-gradient(1200px 600px at 50% -10%, #1f4d3f 0%, var(--bg) 60%) fixed;
+    min-height:100vh; padding:24px 16px 48px;
+  }
+  .snow{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:0}
+  .snow i{position:absolute;top:-10px;border-radius:50%;background:#fff;opacity:.55;animation:fall linear infinite}
+  @keyframes fall{to{transform:translateY(110vh) translateX(30px)}}
+  .wrap{position:relative;z-index:1;max-width:560px;margin:0 auto}
+  header{text-align:center;color:#f4ecd9;margin-bottom:20px}
+  header .star{font-size:28px;color:var(--gold);display:inline-block;animation:twinkle 3s ease-in-out infinite}
+  @keyframes twinkle{50%{transform:scale(1.25) rotate(20deg);opacity:.8}}
+  h1{font-family:Fraunces,serif;font-weight:900;font-size:32px;line-height:1.1;margin:6px 0 8px;letter-spacing:-.01em}
+  header p{margin:0;opacity:.85;font-size:15px}
+  .card{background:var(--card);border-radius:18px;padding:22px;box-shadow:0 20px 50px rgba(0,0,0,.35);margin-bottom:16px}
+  h2{font-family:Fraunces,serif;font-size:21px;margin:0 0 6px}
+  .sub{color:var(--muted);font-size:14px;margin:0 0 16px;line-height:1.5}
+  label{display:block;font-size:13px;font-weight:600;margin:14px 0 6px}
+  input,select,textarea{
+    width:100%;font:inherit;font-size:16px;padding:11px 12px;border:1.5px solid var(--line);
+    border-radius:10px;background:#fff;color:var(--ink);outline:none
+  }
+  textarea{resize:vertical;min-height:110px;line-height:1.45}
+  input:focus,select:focus,textarea:focus{border-color:var(--green)}
+  .row{display:flex;gap:8px}
+  .row > *{flex:1;min-width:0}
+  .row .shrink{flex:0 0 auto}
+  button{
+    font:inherit;font-weight:600;font-size:15px;border:0;border-radius:10px;padding:12px 16px;cursor:pointer;
+    background:var(--red);color:#fff;transition:background .15s, transform .05s
+  }
+  button:hover{background:var(--red2)}
+  button:active{transform:scale(.98)}
+  button.ghost{background:transparent;color:var(--ink);border:1.5px solid var(--line)}
+  button.ghost:hover{background:#f1ebde}
+  button.small{padding:8px 12px;font-size:14px}
+  button.block{width:100%;margin-top:18px;padding:14px}
+  button:disabled{opacity:.5;cursor:not-allowed}
+  .choices{display:grid;gap:12px}
+  .choice{display:flex;align-items:center;gap:14px;text-align:left;background:#fff;color:var(--ink);border:1.5px solid var(--line);padding:16px;border-radius:14px}
+  .choice:hover{background:#fff;border-color:var(--green)}
+  .choice .ico{font-size:30px}
+  .choice b{display:block;font-size:16px}
+  .choice span{font-weight:400;color:var(--muted);font-size:14px}
+  .orglink{display:block;margin:14px auto 0;background:transparent;color:var(--muted);font-weight:500;font-size:13px;padding:6px}
+  .orglink:hover{background:transparent;text-decoration:underline}
+  .excl{display:flex;align-items:center;justify-content:space-between;background:#f4eee2;border-radius:10px;padding:8px 12px;margin-top:8px;font-size:14px}
+  .excl button,.x{background:transparent;color:var(--muted);padding:2px 6px;font-size:18px;line-height:1}
+  .excl button:hover,.x:hover{background:transparent;color:var(--red)}
+  .msg{font-size:14px;border-radius:10px;padding:10px 12px;margin-top:12px;display:none;line-height:1.45}
+  .msg.err{display:block;background:#fbe4e1;color:#8a1f1b}
+  .msg.ok{display:block;background:#e3f1e8;color:#1f5138}
+  .person{border:1.5px solid var(--line);border-radius:12px;padding:12px 14px;margin-top:10px;background:#fff}
+  .person .top{display:flex;justify-content:space-between;align-items:center;gap:10px}
+  .person b{font-size:16px}
+  .tag{display:inline-block;background:#efe7d6;border-radius:999px;padding:2px 9px;font-size:12px;color:#5b5346;margin-left:6px;font-weight:500}
+  .tag.ok{background:#e3f1e8;color:#1f5138}
+  .tag.no{background:#f6e6d9;color:#8a4b1b}
+  .meta{font-size:13px;color:var(--muted);margin-top:4px}
+  details summary{cursor:pointer;font-size:13px;color:var(--green);margin-top:8px;font-weight:600}
+  details textarea{min-height:80px;margin-top:8px;font-size:14px}
+  .code{font-family:ui-monospace,Menlo,monospace;font-size:12px;color:var(--muted);word-break:break-all;margin-top:6px;max-height:3.2em;overflow:hidden}
+  .back{background:transparent;color:#f4ecd9;padding:6px 0;margin-bottom:10px;font-weight:500}
+  .back:hover{background:transparent;text-decoration:underline}
+  .hint{font-size:13px;color:var(--muted);margin-top:6px;line-height:1.45}
+  .note{background:#fff6e0;border:1px solid #f0dca8;border-radius:10px;padding:10px 12px;font-size:13px;line-height:1.5;margin-top:14px}
+  .elf{display:flex;gap:10px;align-items:flex-start;background:#eef5f0;border-radius:12px;padding:10px 12px;margin-top:12px;font-size:14px;line-height:1.45;color:#1f4535}
+  .elf .face{font-size:22px;line-height:1}
+  .elf b{display:block;font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--green);margin-bottom:2px}
+  .codebox{background:#fff;border:1.5px dashed var(--green);border-radius:10px;padding:12px;font-family:ui-monospace,Menlo,monospace;font-size:12px;word-break:break-all;max-height:120px;overflow:auto;margin-top:10px}
+  .toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(120px);background:#1d2a25;color:#fff;padding:12px 16px;border-radius:12px;font-size:14px;max-width:90vw;transition:transform .35s;z-index:5;box-shadow:0 10px 30px rgba(0,0,0,.3)}
+  .toast.on{transform:translateX(-50%) translateY(0)}
+  .loader{text-align:center;padding:18px 0 6px;font-size:15px;color:var(--green);font-weight:600}
+  .loader .hat{font-size:40px;display:block;animation:shake .5s ease-in-out infinite}
+  @keyframes shake{25%{transform:rotate(-12deg)}75%{transform:rotate(12deg)}}
+  /* reveal */
+  .gift{width:150px;height:150px;margin:10px auto 6px;position:relative;cursor:pointer}
+  .gift .box{position:absolute;bottom:0;left:15px;width:120px;height:90px;background:var(--red);border-radius:6px}
+  .gift .lid{position:absolute;top:30px;left:5px;width:140px;height:32px;background:var(--red2);border-radius:6px;transition:transform .7s cubic-bezier(.3,1.6,.5,1)}
+  .gift .rib-v{position:absolute;left:66px;top:30px;width:18px;height:120px;background:var(--gold)}
+  .gift .bow{position:absolute;left:50px;top:6px;width:50px;height:28px;transition:transform .7s cubic-bezier(.3,1.6,.5,1)}
+  .gift .bow:before,.gift .bow:after{content:"";position:absolute;top:0;width:24px;height:24px;border:6px solid var(--gold);border-radius:50% 50% 0 50%}
+  .gift .bow:before{left:-2px;transform:rotate(-20deg)}
+  .gift .bow:after{right:-2px;border-radius:50% 50% 50% 0;transform:rotate(20deg)}
+  .gift.open .lid,.gift.open .bow{transform:translateY(-60px) rotate(-18deg)}
+  .gift:not(.open){animation:wiggle 2.4s ease-in-out infinite}
+  @keyframes wiggle{0%,80%,100%{transform:rotate(0)}85%{transform:rotate(-4deg)}90%{transform:rotate(4deg)}95%{transform:rotate(-2deg)}}
+  .reveal{text-align:center}
+  .later{opacity:0;transform:translateY(10px);transition:all .5s .35s}
+  .open-done .later{opacity:1;transform:none}
+  .who{font-family:Fraunces,serif;font-size:40px;font-weight:900;color:var(--red);margin:4px 0 0}
+  .role{font-size:14px;color:var(--muted);margin-bottom:10px}
+  .quip{font-size:16px;line-height:1.5;margin:8px 0 4px;font-style:italic}
+  .wishes{text-align:left;background:#fff;border:1.5px solid var(--line);border-radius:12px;padding:14px 16px;margin-top:14px}
+  .wishes h3{font-family:Fraunces,serif;font-size:17px;margin:0 0 8px}
+  .wishes ul{margin:0;padding-left:20px;line-height:1.6}
+  .wishes .nope{margin-top:10px;font-size:14px;color:#8a1f1b}
+  .confetti{position:fixed;inset:0;pointer-events:none;z-index:4;overflow:hidden}
+  .confetti i{position:absolute;top:-12px;width:8px;height:12px;animation:drop 2.4s ease-in forwards}
+  @keyframes drop{to{transform:translateY(110vh) rotate(720deg)}}
+  .hidden{display:none !important}
+</style>
+</head>
+<body>
+<div class="snow" id="snow"></div>
+<div class="confetti" id="confetti"></div>
+<div class="toast" id="toast"></div>
+<div class="wrap">
+  <header>
+    <div class="star">✦</div>
+    <h1>Boże Narodzenie<br>u Szabliniaków</h1>
+    <p id="tagline">Kto komu kupuje prezent? Wiedzą tylko elfy.</p>
+  </header>
+
+  <!-- START -->
+  <section id="v-start" class="card">
+    <h2>Ho ho ho! 🎅</h2>
+    <p class="sub">Co robimy?</p>
+    <div class="choices">
+      <button class="choice" data-go="v-list"><div class="ico">📜</div><div><b>Piszę list do Mikołaja</b><span>Wpisz, o czym marzysz (w granicach rozsądku)</span></div></button>
+      <button class="choice" data-go="v-code"><div class="ico">🎁</div><div><b>Mam kod z losowania</b><span>Zobacz, komu kupujesz prezent</span></div></button>
+    </div>
+    <button class="orglink" data-go="v-org">🎄 Panel organizatorki</button>
+  </section>
+
+  <!-- WISHLIST -->
+  <section id="v-list" class="hidden">
+    <button class="back" data-go="v-start">← Wróć</button>
+    <div class="card">
+      <h2>List do Mikołaja</h2>
+      <p class="sub">Osoba, która Cię wylosuje, zobaczy tę listę. Kto nie napisze, ten dostanie skarpetki. Tak mówi tradycja.</p>
+      <label for="lName">Twoje imię (tak jak wpisała je organizatorka)</label>
+      <input id="lName" placeholder="np. Wujek Mietek" maxlength="30">
+      <label for="lWish">Moje życzenia (każde w nowej linii)</label>
+      <textarea id="lWish" placeholder="Książka o pszczołach&#10;Dobra kawa ziarnista&#10;Święty spokój (wiem, że się nie da)"></textarea>
+      <label for="lNope">Czego absolutnie NIE chcę</label>
+      <input id="lNope" placeholder="np. kolejnego kubka z napisem „Najlepszy wujek”" maxlength="150">
+      <div class="elf"><div class="face">🧝</div><div><b>Elf-recenzent</b><span id="elfSays">Elf czeka. Elf jest cierpliwy. Elf zaczyna się nudzić.</span></div></div>
+      <div id="listMsg" class="msg"></div>
+      <button class="block" id="makeList">Zapakuj list ✉️</button>
+      <div id="listOut" class="hidden">
+        <div class="msg ok" style="display:block">Gotowe! Skopiuj ten kod i wyślij go organizatorce. Ona doręczy list Mikołajowi (bez czytania… prawie).</div>
+        <div class="codebox" id="listCode"></div>
+        <button class="block" id="copyList">Kopiuj kod listu</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- CODE ENTRY -->
+  <section id="v-code" class="hidden">
+    <button class="back" data-go="v-start">← Wróć</button>
+    <div class="card">
+      <h2>Twój kod z losowania</h2>
+      <p class="sub">Wklej kod, który dostałeś/aś od organizatorki. Upewnij się, że nikt nie zagląda Ci przez ramię. Zwłaszcza ciocia.</p>
+      <textarea id="codeInput" placeholder="Wklej tutaj swój kod" autocomplete="off" style="min-height:80px;font-family:ui-monospace,Menlo,monospace;font-size:13px"></textarea>
+      <div id="codeMsg" class="msg"></div>
+      <button class="block" id="checkBtn">Sprawdź 🔍</button>
+    </div>
+  </section>
+
+  <!-- REVEAL -->
+  <section id="v-reveal" class="hidden">
+    <div class="card reveal" id="revealCard">
+      <h2 id="hello">Cześć!</h2>
+      <p class="sub" id="tapHint">Stuknij w prezent. Nie bój się, nie gryzie.</p>
+      <div class="gift" id="gift"><div class="box"></div><div class="rib-v"></div><div class="lid"></div><div class="bow"></div></div>
+      <div class="later">
+        <div class="who" id="who"></div>
+        <div class="role" id="whoRole"></div>
+        <p class="quip" id="quip"></p>
+        <div class="elf" id="intel" style="text-align:left"><div class="face">🕵️</div><div><b>Tajne informacje od elfów</b><span id="intelTxt"></span></div></div>
+        <div class="wishes" id="wishBox"></div>
+        <p class="sub" style="margin-top:14px">Ciii… to zostaje między nami 🤫</p>
+        <button class="ghost small" data-go="v-start">Zamknij</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ORGANIZER -->
+  <section id="v-org" class="hidden">
+    <button class="back" data-go="v-start">← Wróć</button>
+
+    <div class="card">
+      <h2>1. Rodzinka</h2>
+      <p class="sub">Dodaj wszystkich dorosłych (siebie też). Rola i ciekawostka posłużą elfom do złośliwych, ale czułych komentarzy.</p>
+      <label for="pName">Imię</label>
+      <input id="pName" placeholder="np. Babcia Halinka" maxlength="30">
+      <div class="row">
+        <div><label for="pRole">Kim jest w rodzinie</label><select id="pRole"></select></div>
+      </div>
+      <label for="pTrait">Ciekawostka (opcjonalnie)</label>
+      <input id="pTrait" placeholder="np. kocha wędkowanie, wiecznie marznie" maxlength="80">
+      <button class="block" id="addPerson" style="margin-top:12px">Dodaj do rodzinki</button>
+      <div id="people"></div>
+    </div>
+
+    <div class="card">
+      <h2>2. Listy do Mikołaja</h2>
+      <p class="sub">Wklej kody list, które dostałaś od rodziny. Możesz wkleić kilka naraz. Listę możesz też wpisać ręcznie przy danej osobie powyżej.</p>
+      <textarea id="listPaste" placeholder="Wklej kody list" style="min-height:80px;font-family:ui-monospace,Menlo,monospace;font-size:13px"></textarea>
+      <button class="ghost block" id="importLists" style="margin-top:10px">Dodaj listy</button>
+      <div id="importMsg" class="msg"></div>
+    </div>
+
+    <div class="card">
+      <h2>3. Kto kogo nie może wylosować</h2>
+      <p class="sub">Np. małżonkowie. Wykluczenie działa w obie strony.</p>
+      <div class="row">
+        <select id="exA"></select>
+        <select id="exB"></select>
+      </div>
+      <button class="ghost small" id="addEx" style="margin-top:8px">+ Dodaj wykluczenie</button>
+      <div id="exList"></div>
+    </div>
+
+    <div class="card">
+      <h2>4. Losowanie</h2>
+      <p class="sub">Losuj, gdy masz już listy życzeń. Kody zawierają listę wylosowanej osoby, więc listy dodane po losowaniu nie trafią do kodów.</p>
+      <div id="orgMsg" class="msg"></div>
+      <div id="loader" class="loader hidden"><span class="hat">🎅</span><span id="loaderTxt"></span></div>
+      <button class="block" id="drawBtn">🎲 Losuj</button>
+    </div>
+
+    <div class="card hidden" id="results">
+      <h2>Gotowe! Wyślij każdemu jego kod</h2>
+      <p class="sub">Wyników nie widzisz nawet Ty, więc możesz grać razem ze wszystkimi. Skopiuj kod i wyślij go danej osobie.</p>
+      <div id="codes"></div>
+      <div class="note">⚠️ Nie wpisuj cudzych kodów, bo zobaczysz cudzy wynik (a elfy wszystko widzą). Nowe losowanie = nowe kody, stare idą do kosza.</div>
+      <button class="ghost block" id="copyAll">Skopiuj wszystkie kody naraz (imię + kod)</button>
+    </div>
+  </section>
+</div>
+
+<script>
+(function(){
+  const $=id=>document.getElementById(id);
+  const pick=a=>a[Math.floor(Math.random()*a.length)];
+  const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+  // ---------- snow & confetti ----------
+  for(let i=0;i<40;i++){const s=document.createElement('i');const z=2+Math.random()*5;
+    s.style.left=Math.random()*100+'%';s.style.width=s.style.height=z+'px';
+    s.style.animationDuration=(8+Math.random()*10)+'s';s.style.animationDelay=(-Math.random()*18)+'s';$('snow').appendChild(s);}
+  function confetti(){const c=$('confetti');c.innerHTML='';const cols=['#b8322e','#d8a64a','#2d6a4f','#fff','#e07a5f'];
+    for(let i=0;i<70;i++){const p=document.createElement('i');p.style.left=Math.random()*100+'%';p.style.background=pick(cols);
+      p.style.animationDelay=Math.random()*.6+'s';p.style.animationDuration=(1.8+Math.random()*1.4)+'s';c.appendChild(p);}
+    setTimeout(()=>c.innerHTML='',3800);}
+  let toastT;function toast(t){const el=$('toast');el.textContent=t;el.classList.add('on');clearTimeout(toastT);toastT=setTimeout(()=>el.classList.remove('on'),3200);}
+
+  $('tagline').textContent=pick([
+    'Kto komu kupuje prezent? Wiedzą tylko elfy.',
+    'Pierogi gotowe, karp zestresowany, losowanie czas zacząć.',
+    'Oficjalny system antyskarpetkowy rodziny Szabliniaków.',
+    'Tu się nie kłócimy o prezenty. Kłócimy się o uszka.'
+  ]);
+
+  // ---------- views ----------
+  const views=['v-start','v-list','v-code','v-reveal','v-org'];
+  function show(id){views.forEach(v=>$(v).classList.toggle('hidden',v!==id));window.scrollTo(0,0);}
+  document.addEventListener('click',e=>{const b=e.target.closest('[data-go]');if(b)show(b.dataset.go);});
+
+  // ---------- roles & jokes ----------
+  const ROLES={
+    babcia:{l:'Babcia',q:['Babcia już ma wszystko, łącznie z opinią o Twojej fryzurze.','Babcia i tak powie „nie trzeba było”. Trzeba było. Kup.','Uwaga: prezent dla babci zostanie pokazany wszystkim sąsiadkom. Bez presji.','Babcia ma dla Ciebie trzy słoiki bigosu. Wyrównaj rachunki.']},
+    dziadek:{l:'Dziadek',q:['Dziadek ucieszy się ze wszystkiego, co da się naprawić młotkiem.','Dziadek przeczyta instrukcję dopiero po zepsuciu prezentu. Wybierz coś solidnego.','Dziadek ma już 14 swetrów. Bądź kreatywny/a.','Dziadek powie „a po co to komu”, a potem nie wypuści tego z rąk do Trzech Króli.']},
+    mama:{l:'Mama',q:['Mama powie, że niczego nie potrzebuje. Mama kłamie.','Musisz zaskoczyć osobę, która zawsze wie, co kombinujesz. Powodzenia.','Mama zasłużyła na coś lepszego niż „laurka 2.0”. Chyba że to naprawdę ładna laurka.']},
+    tata:{l:'Tata',q:['Tata chce „świętego spokoju”. Niestety, nie ma go w promocji.','Skarpetki to klasyka. Ale bądźmy lepsi niż klasyka.','Tata i tak najpierw spyta, ile to kosztowało. Nie mów.']},
+    tesciowa:{l:'Teściowa',q:['Teściowa! Poziom trudności: ekspert. Nie kupuj wagi ani książki kucharskiej.','Spokojnie, oddychaj. To tylko teściowa. Kwiaty ratują życie.','Ten prezent będzie omawiany przy stole przez kilka lat. Wybieraj mądrze.']},
+    tesc:{l:'Teść',q:['Teść. Bezpieczna opcja: coś do nalewek. Ryzykowna opcja: wszystko inne.','Teść doceni prezent w milczeniu. To znaczy, że jest dobrze. Chyba.']},
+    wujek:{l:'Wujek',q:['Wujek będzie opowiadał o tym prezencie przez pięć lat. Postaraj się.','Wujek ma odpowiedź na każde pytanie. Teraz Ty masz pytanie: co mu kupić?','Wujek zna najlepszy dowcip na świecie. Niestety opowie go znowu.']},
+    ciocia:{l:'Ciocia',q:['Ciocia zapyta, „kiedy ślub/dziecko/awans”. Kup jej coś, żeby zajęła ręce.','Ciocia może przekazać Twój prezent dalej za rok. Kup coś dobrego, niech krąży z honorem.','Ciocia zawsze przynosi za dużo ciasta. Czas się odwdzięczyć.']},
+    brat:{l:'Brat',q:['Brat. Możesz kupić coś śmiesznego. On Tobie i tak kupiłby coś gorszego.','Znasz go od zawsze. Wykorzystaj tę wiedzę (z miłością).']},
+    siostra:{l:'Siostra',q:['Siostra. Ona pamięta każdy prezent, jaki jej dałeś/aś. Każdy.','Wiesz o niej wszystko. Wykorzystaj to (z miłością).']},
+    maz:{l:'Mąż',q:['Mąż. Wskazówka: „coś do auta” to nie jest odpowiedź na wszystko. Ale często jest.','Mąż powie, że nic nie chce. Mąż już dawno sprawdził ceny tego, co chce.']},
+    zona:{l:'Żona',q:['Żona. Zero presji. Absolutnie zero. (Jest presja).','Żona już wie, co chce. Pytanie, czy Ty wiesz.']},
+    partner:{l:'Partner/ka',q:['Druga połówka! Zero presji. Absolutnie zero. (Jest presja).','To ta osoba, która wie, gdzie chowasz paragony. Ostrożnie.']},
+    szwagier:{l:'Szwagier',q:['Szwagier. Wspólny język: grill, auta, narzekanie na pogodę. Masz od czego zacząć.','Szwagier doceni wszystko, co nie wymaga montażu.']},
+    szwagierka:{l:'Szwagierka',q:['Szwagierka. Delikatna misja dyplomatyczna. Ambasador rodziny w akcji.','Szwagierka ma gust. Ty masz odwagę. Razem damy radę.']},
+    ziec:{l:'Zięć',q:['Zięć. Prezent pokaże, czy przyjęliśmy go do rodziny. (Przyjęliśmy, ale niech się pomartwi).','Zięć się postara przy stole. Ty postaraj się przy prezencie.']},
+    synowa:{l:'Synowa',q:['Synowa. Okazja, żeby wypaść lepiej niż w zeszłym roku. Albo przynajmniej tak samo.','Synowa ma swoje zdanie. Na szczęście elfy też.']},
+    kuzyn:{l:'Kuzyn',q:['Kuzyn. Widzicie się raz w roku i zawsze jest tak samo śmiesznie. Niech prezent też będzie.']},
+    kuzynka:{l:'Kuzynka',q:['Kuzynka. Pamiętasz, jak razem podjadaliście sernik przed kolacją? Ona też. Odpowiednio.']},
+    syn:{l:'Syn',q:['Syn. Nadal najszybciej znika przy stole, gdy trzeba zmywać. Uwzględnij w prezencie.']},
+    corka:{l:'Córka',q:['Córka. Ma swoje zdanie na każdy temat, prezent też oceni. Fachowo.']},
+    inna:{l:'Członek rodziny',q:['Wylosowałeś/aś kogoś, o kim nie wiesz wszystkiego. Czas na śledztwo.','Tajemnicza postać! Czas na misję wywiadowczą.']}
+  };
+  const CLOSERS=['Paragon zachowaj. Tak na wszelki wypadek.','Elfy będą obserwować.','Budżet rozsądny, fantazja nieograniczona.','Pakowanie w gazetę też się liczy. Ledwo.','Pamiętaj: liczy się gest. I żeby nie były to skarpetki.'];
+  const ADDED={babcia:'Dodano babcię. Pierniki zabezpieczone 🍪',dziadek:'Dodano dziadka. Pilot od telewizora już jest jego 📺',tesciowa:'Dodano teściową. Wszyscy prostują plecy 😬',wujek:'Dodano wujka. Dowcipy w drodze 🥁',ciocia:'Dodano ciocię. Pytania o ślub za 3… 2… 1…',tata:'Dodano tatę. „Nie trzeba mi nic” już zapisane.',mama:'Dodano mamę. Ona i tak wiedziała, że ją dodasz.',maz:'Dodano męża. Lista życzeń: „nic”. Klasyka.',zona:'Dodano żonę. Elfy już się boją.',szwagier:'Dodano szwagra. Grill rozpalony mentalnie 🔥'};
+
+  function wishLines(t){return t.split(/\n+/).map(s=>s.replace(/^[-•*\d.)\s]+/,'').trim()).filter(Boolean);}
+  function elfReview(text,nope){
+    const t=text.toLowerCase(),n=wishLines(text).length;
+    const kw=[[/iphone|telefon|smartfon/,'Telefon? Elf dopisał go do rubryki „marzenia”.'],[/skarpet/,'Skarpetki na własnej liście? Szacunek dla tradycji.'],[/spok/,'Święty spokój jest chwilowo niedostępny. Elfy też go szukają.'],[/samoch|auto|ferrari|porsche/,'Samochód? Mikołaj ma tylko sanie, i to w leasingu.'],[/kaw/,'Kawa: wybór kogoś, kto zamierza przetrwać święta.'],[/wino|nalewk|whisk|piw/,'Elf zanotował. Elf też by chciał.'],[/czekolad|słodycz|ciast/,'Słodycze? Dieta od stycznia. Od którego, nie wiadomo.'],[/pieni|kas|hajs|gotówk/,'Gotówka? Bardzo romantyczne. Elf przewraca oczami.'],[/kot|pies|psa|kota/,'Coś dla zwierzaka? Zwierzak dziękuje. Zwierzak i tak woli pudełko.'],[/wakac|wycieczk|podróż/,'Wycieczka? Mikołaj sprawdza loty. Mikołaj płacze.']];
+    for(const [r,m] of kw)if(r.test(t))return m;
+    if(nope.trim()&&n>0&&Math.random()<.3)return 'Dobrze, że piszesz, czego NIE chcesz. Ciocia już chowała kolejny kubek.';
+    if(n===0)return 'Elf czeka. Elf jest cierpliwy. Elf zaczyna się nudzić.';
+    if(n===1)return 'Jedno życzenie? Skromność godna świętego. Albo lenistwo.';
+    if(n<=3)return 'Ładnie! Konkretnie i z klasą. Elf bije brawo.';
+    if(n<=6)return 'Mikołaj notuje. Elfy już szukają promocji.';
+    if(n<=10)return 'Mikołaj właśnie sprawdził stan konta. Westchnął.';
+    return 'To już nie lista, to katalog wysyłkowy. Elfy złożyły wypowiedzenie.';
+  }
+
+  // ---------- encoding ----------
+  const ALPH='0123456789ABCDEFGHJKMNPQRSTVWXYZ';
+  const KEY='Szabliniakowie-Swieta-2026';
+  const SEP='\u0001';
+  function keystream(n,salt){const out=new Uint8Array(n);let h=2166136261>>>0;const seed=KEY+salt;
+    for(let i=0;i<seed.length;i++){h^=seed.charCodeAt(i);h=Math.imul(h,16777619)>>>0;}
+    for(let i=0;i<n;i++){h^=h<<13;h>>>=0;h^=h>>>17;h^=h<<5;h>>>=0;out[i]=h&255;}return out;}
+  function b32enc(bytes){let bits=0,val=0,out='';for(const b of bytes){val=(val<<8)|b;bits+=8;
+      while(bits>=5){out+=ALPH[(val>>>(bits-5))&31];bits-=5;}val&=(1<<bits)-1;}
+    if(bits>0)out+=ALPH[(val<<(5-bits))&31];return out;}
+  function b32dec(str){let bits=0,val=0;const out=[];for(const ch of str){const i=ALPH.indexOf(ch);if(i<0)return null;
+      val=(val<<5)|i;bits+=5;if(bits>=8){out.push((val>>>(bits-8))&255);bits-=8;}val&=(1<<bits)-1;}return new Uint8Array(out);}
+  function checksum(arr){let a=1,b=0;for(const x of arr){a=(a+x)%251;b=(b+a)%251;}return [a,b];}
+  async function pipe(bytes,stream){return new Uint8Array(await new Response(new Blob([bytes]).stream().pipeThrough(stream)).arrayBuffer());}
+  async function encode(type,fields){
+    const raw=new TextEncoder().encode(fields.join(SEP));
+    let body=raw,flag=0;
+    try{if(window.CompressionStream){const c=await pipe(raw,new CompressionStream('deflate-raw'));if(c.length<raw.length){body=c;flag=1;}}}catch(e){}
+    const salt=Math.floor(Math.random()*256);const ks=keystream(body.length,String(salt));
+    const enc=body.map((b,i)=>b^ks[i]);const cs=checksum(raw);
+    const all=new Uint8Array(enc.length+5);all[0]=type;all[1]=flag;all[2]=salt;all.set(enc,3);all[all.length-2]=cs[0];all[all.length-1]=cs[1];
+    return b32enc(all);
+  }
+  async function decode(code){
+    const clean=String(code).toUpperCase().replace(/[^0-9A-Z]/g,'').replace(/O/g,'0').replace(/[IL]/g,'1').replace(/U/g,'V');
+    const all=b32dec(clean);if(!all||all.length<6)return null;
+    const type=all[0],flag=all[1],salt=all[2],enc=all.slice(3,all.length-2);
+    const ks=keystream(enc.length,String(salt));let body=enc.map((b,i)=>b^ks[i]);
+    if(flag===1){if(!window.DecompressionStream)return {old:true};try{body=await pipe(body,new DecompressionStream('deflate-raw'));}catch(e){return null}}
+    else if(flag!==0)return null;
+    const cs=checksum(body);if(cs[0]!==all[all.length-2]||cs[1]!==all[all.length-1])return null;
+    let txt;try{txt=new TextDecoder('utf-8',{fatal:true}).decode(body)}catch(e){return null}
+    return {type,f:txt.split(SEP)};
+  }
+  const T_ASSIGN=1,T_LIST=2;
+
+  // ---------- wishlist (participant) ----------
+  function updElf(){$('elfSays').textContent=elfReview($('lWish').value,$('lNope').value);}
+  let elfT;$('lWish').addEventListener('input',()=>{clearTimeout(elfT);elfT=setTimeout(updElf,500);});
+  $('lNope').addEventListener('input',()=>{clearTimeout(elfT);elfT=setTimeout(updElf,500);});
+  $('makeList').onclick=async()=>{
+    const name=$('lName').value.trim().replace(/\u0001/g,''),w=wishLines($('lWish').value.replace(/\u0001/g,'')),nope=$('lNope').value.trim().replace(/\u0001/g,'');
+    if(!name){$('listMsg').className='msg err';$('listMsg').textContent='Mikołaj musi wiedzieć, od kogo jest list. Wpisz imię.';return;}
+    if(!w.length){$('listMsg').className='msg err';$('listMsg').textContent='Pusty list? Mikołaj nie czyta w myślach. Wpisz chociaż jedno życzenie.';return;}
+    $('listMsg').className='msg';
+    $('listCode').textContent=await encode(T_LIST,[name,w.join('\n').slice(0,600),nope]);
+    $('listOut').classList.remove('hidden');$('makeList').textContent='Zapakuj ponownie ✉️';
+    $('listOut').scrollIntoView({behavior:'smooth',block:'center'});
+  };
+  $('copyList').onclick=function(){copy($('listCode').textContent,this);};
+
+  // ---------- reveal ----------
+  async function check(code){
+    const r=await decode(code||$('codeInput').value);
+    const m=$('codeMsg');
+    if(r&&r.old){m.className='msg err';m.textContent='Twoja przeglądarka jest starsza niż przepis babci na barszcz. Spróbuj w innej przeglądarce albo zaktualizuj telefon.';return;}
+    if(!r){m.className='msg err';m.textContent='Ten kod nie działa. Sprawdź, czy skopiowałeś/aś go w całości. Elfy nie przyjmują kodów na raty.';return;}
+    if(r.type===T_LIST){m.className='msg err';m.textContent='To jest kod Twojego listu do Mikołaja 📜. Wyślij go organizatorce, a po losowaniu dostaniesz inny kod.';return;}
+    m.className='msg';
+    const [giver,giverRole,recv,recvRole,trait,wishes,nope]=r.f;
+    $('hello').textContent='Cześć, '+giver+'!';
+    $('who').textContent=recv;
+    const R=ROLES[recvRole]||ROLES.inna;
+    $('whoRole').textContent=recvRole&&recvRole!=='inna'?R.l:'';
+    $('quip').textContent=pick(R.q)+' '+pick(CLOSERS);
+    if(trait){$('intel').classList.remove('hidden');$('intelTxt').textContent=trait.charAt(0).toUpperCase()+trait.slice(1)+'. Wykorzystaj to.';}
+    else $('intel').classList.add('hidden');
+    const wl=wishLines(wishes||'');
+    $('wishBox').innerHTML=wl.length
+      ?`<h3>📜 List do Mikołaja</h3><ul>${wl.map(x=>'<li>'+esc(x)+'</li>').join('')}</ul>${nope?'<div class="nope">🚫 Absolutnie nie chce: '+esc(nope)+'</div>':''}`
+      :`<h3>📜 List do Mikołaja</h3><p class="sub" style="margin:0">Ta osoba nie napisała listu. Improwizuj! Elfy sugerują obserwację, przesłuchanie albo dyskretne pytanie mamy.</p>${nope?'<div class="nope">🚫 Absolutnie nie chce: '+esc(nope)+'</div>':''}`;
+    $('gift').classList.remove('open');$('revealCard').classList.remove('open-done');
+    $('tapHint').textContent='Stuknij w prezent. Nie bój się, nie gryzie.';
+    show('v-reveal');
+  }
+  $('checkBtn').onclick=()=>check();
+  $('gift').onclick=function(){if(this.classList.contains('open'))return;
+    this.classList.add('open');$('revealCard').classList.add('open-done');$('tapHint').textContent='W tym roku kupujesz prezent dla…';confetti();};
+  function fromHash(){const h=location.hash.slice(1);if(/^k-/i.test(h)){$('codeInput').value=h.slice(2);check(h.slice(2));}}
+  window.addEventListener('hashchange',fromHash);
+
+  // ---------- organizer ----------
+  const store={get(){try{return JSON.parse(localStorage.getItem('szabliniacy-v2')||'null')}catch(e){return null}},set(v){try{localStorage.setItem('szabliniacy-v2',JSON.stringify(v))}catch(e){}}};
+  let state=store.get()||{people:[],excl:[]};
+  if(!state.people.length){try{const old=JSON.parse(localStorage.getItem('losowanie-v1')||'null');if(old&&old.names){state.people=old.names.map(n=>({name:n,role:'inna',trait:'',wishes:'',nope:''}));state.excl=old.excl||[];}}catch(e){}}
+  const save=()=>store.set(state);
+  $('pRole').innerHTML=Object.entries(ROLES).map(([k,v])=>`<option value="${k}"${k==='inna'?' selected':''}>${v.l}</option>`).join('');
+
+  function renderPeople(){
+    const box=$('people');box.innerHTML='';
+    state.people.forEach((p,i)=>{
+      const d=document.createElement('div');d.className='person';
+      const wl=wishLines(p.wishes||'');
+      d.innerHTML=`<div class="top"><div><b>${esc(p.name)}</b><span class="tag">${esc((ROLES[p.role]||ROLES.inna).l)}</span><span class="tag ${wl.length?'ok':'no'}">${wl.length?'📜 list: '+wl.length:'brak listu'}</span></div></div>
+        ${p.trait?`<div class="meta">💡 ${esc(p.trait)}</div>`:''}
+        <details><summary>Edytuj listę życzeń ręcznie</summary>
+          <textarea data-i="${i}" data-k="wishes" placeholder="Życzenia, każde w nowej linii">${esc(p.wishes||'')}</textarea>
+          <input data-i="${i}" data-k="nope" placeholder="Czego nie chce" value="${esc(p.nope||'')}" style="margin-top:8px;font-size:14px">
+        </details>`;
+      const x=document.createElement('button');x.className='x';x.textContent='×';x.title='Usuń';
+      x.onclick=()=>{const n=p.name;state.excl=state.excl.filter(e=>e[0]!==n&&e[1]!==n);state.people.splice(i,1);save();renderAll();};
+      d.querySelector('.top').appendChild(x);box.appendChild(d);
+    });
+    box.querySelectorAll('[data-k]').forEach(el=>el.addEventListener('change',()=>{state.people[+el.dataset.i][el.dataset.k]=el.value;save();renderAll();}));
+  }
+  function renderEx(){
+    const opts='<option value="">Wybierz…</option>'+state.people.map(p=>`<option>${esc(p.name)}</option>`).join('');
+    $('exA').innerHTML=opts;$('exB').innerHTML=opts;
+    $('exList').innerHTML='';
+    state.excl.forEach((p,i)=>{const d=document.createElement('div');d.className='excl';d.innerHTML=`<span>${esc(p[0])} ✕ ${esc(p[1])}</span>`;
+      const x=document.createElement('button');x.textContent='×';x.onclick=()=>{state.excl.splice(i,1);save();renderEx();};d.appendChild(x);$('exList').appendChild(d);});
+  }
+  function renderAll(){renderPeople();renderEx();}
+  function orgErr(t){$('orgMsg').className='msg err';$('orgMsg').textContent=t;}
+  function orgClear(){$('orgMsg').className='msg';}
+
+  function addPerson(){
+    const name=$('pName').value.trim().replace(/\u0001/g,'');if(!name)return;
+    if(state.people.some(p=>p.name.toLowerCase()===name.toLowerCase())){toast('Ta osoba już jest. Klonowanie wujków jest zakazane 🧬');return;}
+    const role=$('pRole').value;
+    state.people.push({name,role,trait:$('pTrait').value.trim().replace(/\u0001/g,''),wishes:'',nope:''});
+    $('pName').value='';$('pTrait').value='';$('pRole').value='inna';$('pName').focus();
+    save();renderAll();toast(ADDED[role]||pick(['Dodano! Rodzina rośnie 🎄','Kolejna osoba w drużynie prezentowej 🎁','Elfy przyjęły zgłoszenie ✅']));
+  }
+  $('addPerson').onclick=addPerson;
+  $('pName').addEventListener('keydown',e=>{if(e.key==='Enter')$('pTrait').focus();});
+  $('pTrait').addEventListener('keydown',e=>{if(e.key==='Enter')addPerson();});
+
+  $('importLists').onclick=async()=>{
+    const chunks=$('listPaste').value.split(/[\s,;]+/).filter(s=>s.replace(/[^0-9A-Za-z]/g,'').length>10);
+    const msg=$('importMsg');let ok=[],bad=0,unknown=[];
+    for(const c of chunks){const r=await decode(c);
+      if(!r||r.old||r.type!==T_LIST){bad++;continue;}
+      const [name,wishes,nope]=r.f;
+      let p=state.people.find(x=>x.name.toLowerCase()===name.toLowerCase());
+      if(!p)p=state.people.find(x=>x.name.toLowerCase().includes(name.toLowerCase())||name.toLowerCase().includes(x.name.toLowerCase()));
+      if(!p){unknown.push(name);continue;}
+      p.wishes=wishes;p.nope=nope;ok.push(p.name);}
+    save();renderAll();
+    let t='';if(ok.length)t+='📜 Dodano listy: '+ok.join(', ')+'. ';
+    if(unknown.length)t+='Nie znalazłam w rodzince: '+unknown.join(', ')+'. Dodaj te osoby (albo popraw imię) i wklej kod jeszcze raz. ';
+    if(bad)t+=bad+' kod(y) nie zadziałały. Poproś o ponowne skopiowanie w całości.';
+    if(!chunks.length)t='Najpierw wklej kod listu.';
+    msg.className='msg '+(ok.length&&!unknown.length&&!bad?'ok':'err');msg.textContent=t;
+    if(ok.length&&!unknown.length&&!bad)$('listPaste').value='';
+  };
+
+  $('addEx').onclick=()=>{const a=$('exA').value,b=$('exB').value;
+    if(!a||!b||a===b){toast('Wybierz dwie różne osoby. Nikt nie wylosuje sam siebie, spokojnie.');return;}
+    if(state.excl.some(p=>(p[0]===a&&p[1]===b)||(p[0]===b&&p[1]===a)))return;
+    state.excl.push([a,b]);save();renderEx();};
+
+  function allowed(g,r){return g!==r&&!state.excl.some(p=>(p[0]===g&&p[1]===r)||(p[0]===r&&p[1]===g));}
+  function rnd(n){return crypto.getRandomValues(new Uint32Array(1))[0]%n;}
+  function shuffle(a){for(let i=a.length-1;i>0;i--){const j=rnd(i+1);[a[i],a[j]]=[a[j],a[i]];}return a;}
+  function draw(names){
+    for(let attempt=0;attempt<500;attempt++){
+      const givers=shuffle(names.slice()),used=new Set(),res={};let steps=0;
+      const bt=i=>{if(++steps>20000)return false;if(i===givers.length)return true;const g=givers[i];
+        for(const r of shuffle(names.slice())){if(!used.has(r)&&allowed(g,r)){used.add(r);res[g]=r;if(bt(i+1))return true;used.delete(r);}}return false;};
+      if(bt(0))return res;
+    }
+    return null;
+  }
+
+  let codes=[];
+  const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+  $('drawBtn').onclick=async()=>{
+    if(state.people.length<3){orgErr('Do losowania potrzeba co najmniej 3 osób. We dwoje to nie losowanie, to randka.');return;}
+    if(!$('results').classList.contains('hidden')&&!$('drawBtn').dataset.confirm){
+      $('drawBtn').dataset.confirm='1';$('drawBtn').textContent='Na pewno? Stare kody przestaną być aktualne. Kliknij jeszcze raz.';return;}
+    delete $('drawBtn').dataset.confirm;
+    const names=state.people.map(p=>p.name);
+    const res=draw(names);
+    if(!res){orgErr('Przy tych wykluczeniach nie da się nikogo dobrać. Elfy rozkładają ręce. Usuń jedno lub dwa wykluczenia.');return;}
+    orgClear();
+    const missing=state.people.filter(p=>!wishLines(p.wishes||'').length).map(p=>p.name);
+    $('drawBtn').disabled=true;$('loader').classList.remove('hidden');$('results').classList.add('hidden');
+    for(const t of ['Mieszam losy w czapce Mikołaja…','Przekupuję elfy piernikami…','Sprawdzam, kto był grzeczny…','Zasłaniam wyniki przed organizatorką 🙈']){$('loaderTxt').textContent=t;await sleep(750);}
+    const by=Object.fromEntries(state.people.map(p=>[p.name,p]));
+    codes=[];
+    for(const g of names){const G=by[g],Rc=by[res[g]];
+      codes.push({g,code:await encode(T_ASSIGN,[G.name,G.role,Rc.name,Rc.role,Rc.trait||'',Rc.wishes||'',Rc.nope||''])});}
+    $('loader').classList.add('hidden');$('drawBtn').disabled=false;$('drawBtn').textContent='🎲 Losuj ponownie';
+    $('codes').innerHTML=missing.length?`<div class="note" style="margin-top:0">📭 Bez listy: ${missing.map(esc).join(', ')}. Ich Mikołaje będą musieli improwizować.</div>`:'';
+    codes.forEach(x=>{const d=document.createElement('div');d.className='person';
+      d.innerHTML=`<div class="top"><b>${esc(x.g)}</b></div><div class="code">${x.code}</div>`;
+      const b=document.createElement('button');b.className='small';b.textContent='Kopiuj kod';b.onclick=()=>copy(x.code,b);
+      d.querySelector('.top').appendChild(b);$('codes').appendChild(d);});
+    $('results').classList.remove('hidden');$('results').scrollIntoView({behavior:'smooth'});confetti();
+  };
+  $('copyAll').onclick=function(){copy(codes.map(x=>x.g+': '+x.code).join('\n\n'),this);};
+
+  function copy(text,btn){const old=btn.textContent;
+    const done=()=>{btn.textContent='✓ Skopiowano';setTimeout(()=>btn.textContent=old,1600);};
+    const fallback=()=>{const t=document.createElement('textarea');t.value=text;document.body.appendChild(t);t.select();
+      try{document.execCommand('copy');done();}catch(e){btn.textContent='Nie udało się skopiować';}t.remove();};
+    try{navigator.clipboard.writeText(text).then(done,fallback);}catch(e){fallback();}
+  }
+
+  renderAll();fromHash();
+})();
+</script>
+</body>
+</html>
