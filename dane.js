@@ -44,10 +44,6 @@ window.DANE = {
       { godzina: '21:30', co: 'Losowanie, kto zmywa 🧽' },
       { godzina: '22:00', co: 'Kolędy, ciasto, quiz rodzinny' },
     ],
-    // Kto po kogo jedzie
-    transport: [
-      // przykład: { kierowca: 'Patryczek', zabiera: 'Lusia, Dareczek', wyjazd: '18:00' },
-    ],
   },
 
   // MENU — kto: '' oznacza, że nikt jeszcze nie zaklepał

@@ -208,11 +208,6 @@
       <p class="sub" id="planAddr"></p>
       <ul class="tl" id="planList"></ul>
     </div>
-    <div class="card">
-      <h2>Kto po kogo jedzie 🚗</h2>
-      <p class="sub">Kierowcy: tankujemy wcześniej, nie w Wigilię o 15:50.</p>
-      <div id="carList"></div>
-    </div>
   </section>
 
   <!-- MENU -->
@@ -718,8 +713,6 @@
   // plan
   $('planAddr').innerHTML=D.plan&&D.plan.adres?'📍 '+esc(D.plan.adres)+(/\d/.test(D.plan.adres)?` · <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(D.plan.adres)}">mapa</a>`:''):'';
   $('planList').innerHTML=(D.plan&&D.plan.harmonogram||[]).map(x=>`<li><span class="t">${esc(x.godzina||'')}</span><span>${esc(x.co||'')}</span></li>`).join('');
-  const cars=(D.plan&&D.plan.transport)||[];
-  $('carList').innerHTML=cars.length?cars.map(c=>`<div class="car">🚗 <b>${esc(c.kierowca)}</b> zabiera: ${esc(c.zabiera)}${c.wyjazd?`<br><span class="meta">Wyjazd: ${esc(c.wyjazd)}</span>`:''}</div>`).join(''):`<p class="sub">Jeszcze nic nie ustalone. Potrzebujesz podwózki? Napisz do: ${esc(ORG)}.</p>`;
 
   // menu
   const menu=D.menu||[];const taken=menu.filter(m=>m.kto).length;
