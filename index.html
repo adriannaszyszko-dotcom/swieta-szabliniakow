@@ -290,7 +290,8 @@
       <div id="listOut" class="hidden">
         <div class="msg ok" style="display:block">✉️ List zapieczętowany! Ostatni krok: <b>wyślij go Adusi SMS-em</b>. Kliknij przycisk, a potem w telefonie tylko „Wyślij”.</div>
         <a class="block btnlink" id="smsList" href="#">📱 Wyślij SMS do Adusi</a>
-        <button class="ghost block" id="shareList" style="margin-top:10px">Wolę Messengera / WhatsAppa</button>
+        <a class="block btnlink" id="waList" href="#" style="background:#1f8a4c;margin-top:10px">💬 Wyślij przez WhatsAppa</a>
+        <button class="ghost block" id="shareList" style="margin-top:10px">📋 Skopiuj list (wkleję gdzie indziej)</button>
         <details><summary>Pokaż zapieczętowany list (kod)</summary>
           <div class="codebox" id="listCode"></div>
           <button class="ghost block" id="copyList" style="margin-top:10px">Kopiuj kod listu</button>
@@ -411,7 +412,7 @@
   </section>
 </div>
 
-<script src="dane.js"></script>
+<script>document.write('<script src="dane.js?v='+Date.now()+'"><\/script>')</script>
 <script>
 (function(){
   const $=id=>document.getElementById(id);
@@ -541,15 +542,18 @@
   };
   $('copyList').onclick=function(){copy($('listCode').textContent,this);};
   function listText(){return '📜 Mój list do Mikołaja ('+$('lName').value+'):\n'+$('listCode').textContent;}
-  function setSms(){const tel=(window.DANE&&window.DANE.telefon)||'';const a=$('smsList');
-    if(!tel){a.classList.add('hidden');return;}a.classList.remove('hidden');
-    a.href='sms:'+tel+'?&body='+encodeURIComponent(listText());}
+  const TEL=((window.DANE&&window.DANE.telefon)||'+48793367688').replace(/[^0-9+]/g,'');
+  function setSms(){const t=encodeURIComponent(listText());
+    $('smsList').href='sms:'+TEL+(/iPhone|iPad|iPod/i.test(navigator.userAgent)?'&body=':'?body=')+t;
+    $('waList').href='https://wa.me/'+TEL.replace('+','')+'?text='+t;}
   $('smsList').addEventListener('click',()=>{if(!/Android|iPhone|iPad|iPod/i.test(navigator.userAgent))toast('SMS działa z telefonu. Na komputerze użyj przycisku poniżej.');});
-  $('shareList').onclick=async function(){
-    const text=listText();
-    if(navigator.share){try{await navigator.share({text});toast('Wysłane? Super! Elf odhacza ✅');return;}catch(e){if(e&&e.name==='AbortError')return;}}
-    copy(text,this);toast('Skopiowane! Wklej to w wiadomości do Adusi 📩');
+  $('shareList').onclick=function(){
+    copy(listText(),this);
+    const d=document.querySelector('#listOut details');if(d)d.open=true;
+    const r=document.createRange();r.selectNodeContents($('listCode'));const sel=getSelection();sel.removeAllRanges();sel.addRange(r);
+    toast('Skopiowane! Wklej w wiadomości do Adusi 📩');
   };
+
 
   // ---------- reveal ----------
   async function check(code){
