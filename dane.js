@@ -46,21 +46,8 @@ window.DANE = {
     ],
   },
 
-  // MENU — kto: '' oznacza, że nikt jeszcze nie zaklepał
-  menu: [
-    { potrawa: 'Barszcz czerwony z uszkami', kto: '' },
-    { potrawa: 'Pierogi z kapustą i grzybami', kto: '' },
-    { potrawa: 'Karp smażony', kto: '' },
-    { potrawa: 'Ryba po grecku', kto: '' },
-    { potrawa: 'Śledzie w oleju', kto: '' },
-    { potrawa: 'Kapusta z grochem', kto: '' },
-    { potrawa: 'Sałatka jarzynowa', kto: '' },
-    { potrawa: 'Kutia', kto: '' },
-    { potrawa: 'Makowiec', kto: '' },
-    { potrawa: 'Sernik', kto: '' },
-    { potrawa: 'Piernik', kto: '' },
-    { potrawa: 'Kompot z suszu', kto: '' },
-  ],
+  // CO KTO PRZYNOSI — adres arkusza Google (wkleja Claude po podłączeniu)
+  jedzenieUrl: '',
 
   // QUIZ — odpowiedzi: lista możliwości, poprawna: numer poprawnej odpowiedzi (liczone od 1)
   quiz: [
