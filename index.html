@@ -286,9 +286,12 @@
       <div id="listMsg" class="msg"></div>
       <button class="block" id="makeList">Zapakuj list ✉️</button>
       <div id="listOut" class="hidden">
-        <div class="msg ok" style="display:block">Gotowe! Skopiuj ten kod i wyślij go organizatorce. Ona doręczy list Mikołajowi (bez czytania… prawie).</div>
-        <div class="codebox" id="listCode"></div>
-        <button class="block" id="copyList">Kopiuj kod listu</button>
+        <div class="msg ok" style="display:block">✉️ List zapieczętowany! Ostatni krok: <b>wyślij go Adusi</b>. Kliknij przycisk poniżej i wybierz Messengera, SMS albo WhatsAppa.</div>
+        <button class="block" id="shareList">📤 Wyślij list Adusi</button>
+        <details><summary>Pokaż zapieczętowany list (kod)</summary>
+          <div class="codebox" id="listCode"></div>
+          <button class="ghost block" id="copyList" style="margin-top:10px">Kopiuj kod listu</button>
+        </details>
       </div>
     </div>
   </section>
@@ -355,7 +358,7 @@
 
     <div class="card">
       <h2>3. Listy do Mikołaja</h2>
-      <p class="sub">Wklej kody list, które dostałaś od rodziny. Możesz wkleić kilka naraz. Listę możesz też wpisać ręcznie przy danej osobie powyżej.</p>
+      <p class="sub">Wklej wiadomości z listami, które dostałaś od rodziny. Możesz wkleić kilka naraz, całe wiadomości razem z tekstem. Listę możesz też wpisać ręcznie przy danej osobie powyżej.</p>
       <textarea id="listPaste" placeholder="Wklej kody list" style="min-height:80px;font-family:ui-monospace,Menlo,monospace;font-size:13px"></textarea>
       <button class="ghost block" id="importLists" style="margin-top:10px">Dodaj listy</button>
       <div id="importMsg" class="msg"></div>
@@ -530,10 +533,15 @@
     if(!w.length){$('listMsg').className='msg err';$('listMsg').textContent='Pusty list? Mikołaj nie czyta w myślach. Wpisz chociaż jedno życzenie.';return;}
     $('listMsg').className='msg';
     $('listCode').textContent=await encode(T_LIST,[name,w.join('\n').slice(0,600),nope]);
-    $('listOut').classList.remove('hidden');$('makeList').textContent='Zapakuj ponownie ✉️';
+    $('listOut').classList.remove('hidden');$('makeList').textContent='Popraw i zapakuj ponownie ✉️';
     $('listOut').scrollIntoView({behavior:'smooth',block:'center'});
   };
   $('copyList').onclick=function(){copy($('listCode').textContent,this);};
+  $('shareList').onclick=async function(){
+    const text='📜 Mój list do Mikołaja ('+$('lName').value+'):\n'+$('listCode').textContent;
+    if(navigator.share){try{await navigator.share({text});toast('Wysłane? Super! Elf odhacza ✅');return;}catch(e){if(e&&e.name==='AbortError')return;}}
+    copy(text,this);toast('Skopiowane! Wklej to w wiadomości do Adusi 📩');
+  };
 
   // ---------- reveal ----------
   async function check(code){
@@ -649,7 +657,7 @@
   $('pTrait').addEventListener('keydown',e=>{if(e.key==='Enter')addPerson();});
 
   $('importLists').onclick=async()=>{
-    const chunks=$('listPaste').value.split(/[\s,;]+/).filter(s=>s.replace(/[^0-9A-Za-z]/g,'').length>10);
+    const chunks=$('listPaste').value.split(/[\s,;:()]+/).filter(s=>/^[0-9A-Za-z-]{20,}$/.test(s));
     const msg=$('importMsg');let ok=[],bad=0,unknown=[];
     for(const c of chunks){const r=await decode(c);
       if(!r||r.old||r.type!==T_LIST){bad++;continue;}
