@@ -83,8 +83,8 @@
   .elf .face{font-size:22px;line-height:1}
   .elf b{display:block;font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--green);margin-bottom:2px}
   .codebox{background:#fff;border:1.5px dashed var(--green);border-radius:10px;padding:12px;font-family:ui-monospace,Menlo,monospace;font-size:12px;word-break:break-all;max-height:120px;overflow:auto;margin-top:10px}
-  .toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(120px);background:#1d2a25;color:#fff;padding:12px 16px;border-radius:12px;font-size:14px;max-width:90vw;transition:transform .35s;z-index:5;box-shadow:0 10px 30px rgba(0,0,0,.3)}
-  .toast.on{transform:translateX(-50%) translateY(0)}
+  .toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(120px);background:#1d2a25;color:#fff;padding:12px 16px;border-radius:12px;font-size:14px;max-width:90vw;transition:transform .35s,opacity .35s;opacity:0;z-index:5;box-shadow:0 10px 30px rgba(0,0,0,.3)}
+  .toast.on{transform:translateX(-50%) translateY(0);opacity:1}
   .loader{text-align:center;padding:18px 0 6px;font-size:15px;color:var(--green);font-weight:600}
   .loader .hat{font-size:40px;display:block;animation:shake .5s ease-in-out infinite}
   @keyframes shake{25%{transform:rotate(-12deg)}75%{transform:rotate(12deg)}}
@@ -120,6 +120,43 @@
   .rel{display:flex;align-items:center;justify-content:space-between;gap:8px;background:#f4eee2;border-radius:10px;padding:8px 12px;margin-top:8px;font-size:14px}
   .rel b{font-weight:600}
   .relhead{font-family:Fraunces,serif;font-size:20px;font-weight:700;color:var(--green);margin:2px 0 6px}
+  .cd{text-align:center;background:linear-gradient(160deg,#b8322e,#8e211e);color:#fff7e8}
+  .cd h2{color:#fff7e8;font-size:18px;margin-bottom:12px}
+  .cd .nums{display:flex;justify-content:center;gap:10px}
+  .cd .nums div{background:rgba(255,255,255,.14);border-radius:12px;padding:10px 0;width:68px}
+  .cd .nums b{display:block;font-family:Fraunces,serif;font-size:30px;line-height:1}
+  .cd .nums span{font-size:12px;opacity:.85}
+  .cd p{margin:12px 0 0;font-size:14px;opacity:.9}
+  .tiles{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .tile{background:#fff;color:var(--ink);border:1.5px solid var(--line);border-radius:14px;padding:16px 10px;text-align:center;font-weight:600;font-size:14px;line-height:1.3}
+  .tile:hover{background:#fff;border-color:var(--green)}
+  .tile .ico{display:block;font-size:30px;margin-bottom:6px}
+  .tile.wide{grid-column:1/-1}
+  .tl{list-style:none;margin:0;padding:0}
+  .tl li{display:flex;gap:14px;padding:10px 0;border-bottom:1px dashed var(--line);font-size:15px;line-height:1.4}
+  .tl li:last-child{border-bottom:0}
+  .tl .t{font-family:Fraunces,serif;font-weight:700;color:var(--red);min-width:54px}
+  .car{background:#fff;border:1.5px solid var(--line);border-radius:12px;padding:12px 14px;margin-top:10px;font-size:15px;line-height:1.5}
+  .dish{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:11px 0;border-bottom:1px dashed var(--line);font-size:15px}
+  .dish:last-child{border-bottom:0}
+  .dish .who2{font-weight:600;color:var(--green);text-align:right;white-space:nowrap}
+  .dish .free{font-size:13px;color:#8a4b1b;background:#f6e6d9;border-radius:999px;padding:3px 10px;white-space:nowrap}
+  .bar{height:10px;background:#efe7d6;border-radius:99px;overflow:hidden;margin:4px 0 14px}
+  .bar i{display:block;height:100%;background:var(--green);border-radius:99px;transition:width .6s}
+  .slot{font-family:Fraunces,serif;font-size:36px;font-weight:900;text-align:center;color:var(--red);min-height:60px;padding:10px 0;margin:8px 0;background:#fff;border:2px dashed var(--gold);border-radius:14px}
+  .slot.spin{color:var(--muted)}
+  .winners{list-style:none;padding:0;margin:10px 0 0}
+  .winners li{background:#fff;border:1.5px solid var(--line);border-radius:12px;padding:12px 14px;margin-top:8px;animation:pop .4s cubic-bezier(.3,1.6,.5,1)}
+  .winners li b{font-size:18px}
+  .winners li span{display:block;font-size:14px;color:var(--muted);margin-top:2px}
+  @keyframes pop{from{transform:scale(.6);opacity:0}}
+  .opts{display:grid;gap:8px;margin-top:12px}
+  .opt{background:#fff;color:var(--ink);border:1.5px solid var(--line);text-align:left;font-weight:500}
+  .opt:hover{background:#fff;border-color:var(--green)}
+  .opt.good{background:#e3f1e8;border-color:#2d6a4f;color:#1f5138;font-weight:700}
+  .opt.bad{background:#fbe4e1;border-color:#b8322e;color:#8a1f1b}
+  .qn{font-size:13px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.05em}
+  .qq{font-family:Fraunces,serif;font-size:22px;line-height:1.3;margin:6px 0 4px}
   .hidden{display:none !important}
 </style>
 </head>
@@ -135,14 +172,92 @@
   </header>
 
   <!-- START -->
-  <section id="v-start" class="card">
-    <h2>Ho ho ho! 🎅</h2>
-    <p class="sub">Co robimy?</p>
-    <div class="choices">
-      <button class="choice" data-go="v-list"><div class="ico">📜</div><div><b>Piszę list do Mikołaja</b><span>Wpisz, o czym marzysz (w granicach rozsądku)</span></div></button>
-      <button class="choice" data-go="v-code"><div class="ico">🎁</div><div><b>Mam kod z losowania</b><span>Zobacz, komu kupujesz prezent</span></div></button>
+  <section id="v-start">
+    <div class="card cd">
+      <h2 id="cdTitle">Do Wigilii zostało</h2>
+      <div class="nums" id="cdNums"><div><b id="cdD">–</b><span>dni</span></div><div><b id="cdH">–</b><span>godz.</span></div><div><b id="cdM">–</b><span>min</span></div><div><b id="cdS">–</b><span>sek</span></div></div>
+      <p id="cdNote"></p>
+    </div>
+    <div class="card">
+      <h2>Prezenty 🎁</h2>
+      <p class="sub">Najpierw list do Mikołaja, potem kod z losowania.</p>
+      <div class="choices">
+        <button class="choice" data-go="v-list"><div class="ico">📜</div><div><b>Piszę list do Mikołaja</b><span>Wpisz, o czym marzysz (w granicach rozsądku)</span></div></button>
+        <button class="choice" data-go="v-code"><div class="ico">🎁</div><div><b>Mam kod z losowania</b><span>Zobacz, komu kupujesz prezent</span></div></button>
+      </div>
+    </div>
+    <div class="card">
+      <h2>Wigilia 🎄</h2>
+      <p class="sub">Wszystko, co trzeba wiedzieć, zanim usiądziemy do stołu.</p>
+      <div class="tiles">
+        <button class="tile" data-go="v-plan"><span class="ico">🗓️</span>Plan dnia</button>
+        <button class="tile" data-go="v-menu"><span class="ico">🥟</span>Co kto przynosi</button>
+        <button class="tile" data-go="v-dish"><span class="ico">🧽</span>Kto zmywa?</button>
+        <button class="tile" data-go="v-santa"><span class="ico">🎅</span>Kto zostaje Mikołajem?</button>
+        <button class="tile wide" data-go="v-quiz"><span class="ico">🧠</span>Rodzinny quiz</button>
+      </div>
     </div>
     <button class="orglink" data-go="v-org">🎄 Panel organizatorki</button>
+  </section>
+
+  <!-- PLAN -->
+  <section id="v-plan" class="hidden">
+    <button class="back" data-go="v-start">← Wróć</button>
+    <div class="card">
+      <h2>Plan Wigilii 🗓️</h2>
+      <p class="sub" id="planAddr"></p>
+      <ul class="tl" id="planList"></ul>
+    </div>
+    <div class="card">
+      <h2>Kto po kogo jedzie 🚗</h2>
+      <p class="sub">Kierowcy: tankujemy wcześniej, nie w Wigilię o 15:50.</p>
+      <div id="carList"></div>
+    </div>
+  </section>
+
+  <!-- MENU -->
+  <section id="v-menu" class="hidden">
+    <button class="back" data-go="v-start">← Wróć</button>
+    <div class="card">
+      <h2>Co kto przynosi 🥟</h2>
+      <p class="sub" id="menuSum"></p>
+      <div class="bar"><i id="menuBar" style="width:0"></i></div>
+      <div id="menuList"></div>
+      <div class="elf"><div class="face">🧝</div><div><b>Elf-kucharz</b><span id="menuElf"></span></div></div>
+    </div>
+  </section>
+
+  <!-- ZMYWANIE -->
+  <section id="v-dish" class="hidden">
+    <button class="back" data-go="v-start">← Wróć</button>
+    <div class="card">
+      <h2>Kto zmywa? 🧽</h2>
+      <p class="sub">Los wybierze 3 osoby do brygady zmywakowej. Odznacz te, których nie ma przy stole.</p>
+      <div class="checks" id="dishPeople"></div>
+      <div class="slot" id="dishSlot">🧽</div>
+      <button class="block" id="dishBtn">🥁 Losuj brygadę!</button>
+      <ul class="winners" id="dishWin"></ul>
+      <p class="sub hidden" id="dishEnd" style="margin-top:14px"></p>
+    </div>
+  </section>
+
+  <!-- MIKOŁAJ -->
+  <section id="v-santa" class="hidden">
+    <button class="back" data-go="v-start">← Wróć</button>
+    <div class="card">
+      <h2>Kto zostaje Mikołajem? 🎅</h2>
+      <p class="sub">Los wybierze jednego Mikołaja. Najlepiej losować, zanim dzieci zajrzą w telefon!</p>
+      <div class="checks" id="santaPeople"></div>
+      <div class="slot" id="santaSlot">🎅</div>
+      <button class="block" id="santaBtn">🥁 Losuj Mikołaja!</button>
+      <ul class="winners" id="santaWin"></ul>
+    </div>
+  </section>
+
+  <!-- QUIZ -->
+  <section id="v-quiz" class="hidden">
+    <button class="back" data-go="v-start">← Wróć</button>
+    <div class="card" id="quizCard"></div>
   </section>
 
   <!-- WISHLIST -->
@@ -264,6 +379,7 @@
   </section>
 </div>
 
+<script src="dane.js"></script>
 <script>
 (function(){
   const $=id=>document.getElementById(id);
@@ -288,7 +404,7 @@
   ]);
 
   // ---------- views ----------
-  const views=['v-start','v-list','v-code','v-reveal','v-org'];
+  const views=['v-start','v-list','v-code','v-reveal','v-org','v-plan','v-menu','v-dish','v-santa','v-quiz'];
   function show(id){views.forEach(v=>$(v).classList.toggle('hidden',v!==id));window.scrollTo(0,0);}
   document.addEventListener('click',e=>{const b=e.target.closest('[data-go]');if(b)show(b.dataset.go);});
 
@@ -577,6 +693,101 @@
       try{document.execCommand('copy');done();}catch(e){btn.textContent='Nie udało się skopiować';}t.remove();};
     try{navigator.clipboard.writeText(text).then(done,fallback);}catch(e){fallback();}
   }
+
+  // ================= WIGILIA =================
+  const D=window.DANE||{rodzina:[],plan:{harmonogram:[],transport:[]},menu:[],quiz:[]};
+  const ORG=D.organizatorka||'organizatorki';
+
+  // odliczanie
+  const target=new Date(D.wigilia||'2026-12-24T17:00');
+  const pad=n=>String(n).padStart(2,'0');
+  const notes=['Karp już nerwowo pływa w wannie 🐟','Elfy liczą pierogi. Na razie wychodzi za mało.','Kto nie kupił prezentu, ten jeszcze ma czas. Mało, ale ma.','Babcia już zaczęła lepić uszka. Tak na wszelki wypadek.','Choinka czeka. Bombki też. Kot czeka najbardziej.'];
+  $('cdNote').textContent=pick(notes);
+  function tick(){
+    const ms=target-new Date();
+    if(ms<=0){
+      const end=new Date(target);end.setDate(end.getDate()+3);
+      $('cdTitle').textContent=new Date()<end?'Wesołych Świąt! 🎄':'Do zobaczenia za rok! 🎄';
+      $('cdNums').classList.add('hidden');$('cdNote').textContent='Elfy idą spać. Smacznego!';return;}
+    const sec=Math.floor(ms/1000);
+    $('cdD').textContent=Math.floor(sec/86400);$('cdH').textContent=pad(Math.floor(sec%86400/3600));
+    $('cdM').textContent=pad(Math.floor(sec%3600/60));$('cdS').textContent=pad(sec%60);
+  }
+  tick();setInterval(tick,1000);
+
+  // plan
+  $('planAddr').innerHTML=D.plan&&D.plan.adres?'📍 '+esc(D.plan.adres)+` · <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(D.plan.adres)}">mapa</a>`:'';
+  $('planList').innerHTML=(D.plan&&D.plan.harmonogram||[]).map(x=>`<li><span class="t">${esc(x.godzina||'')}</span><span>${esc(x.co||'')}</span></li>`).join('');
+  const cars=(D.plan&&D.plan.transport)||[];
+  $('carList').innerHTML=cars.length?cars.map(c=>`<div class="car">🚗 <b>${esc(c.kierowca)}</b> zabiera: ${esc(c.zabiera)}${c.wyjazd?`<br><span class="meta">Wyjazd: ${esc(c.wyjazd)}</span>`:''}</div>`).join(''):`<p class="sub">Jeszcze nic nie ustalone. Potrzebujesz podwózki? Napisz do: ${esc(ORG)}.</p>`;
+
+  // menu
+  const menu=D.menu||[];const taken=menu.filter(m=>m.kto).length;
+  const freeJokes=['szukamy chętnego!','ktoś? cokolwiek?','czeka na bohatera','wolne, jak krzesło dla wędrowca'];
+  $('menuSum').textContent=`Zaklepane: ${taken} z ${menu.length}. Chcesz coś przygotować? Napisz do: ${ORG}.`;
+  $('menuBar').style.width=(menu.length?taken/menu.length*100:0)+'%';
+  $('menuList').innerHTML=menu.map(m=>`<div class="dish"><span>${esc(m.potrawa)}</span>${m.kto?`<span class="who2">${esc(m.kto)}</span>`:`<span class="free">🙋 ${pick(freeJokes)}</span>`}</div>`).join('');
+  const left=menu.length-taken;
+  $('menuElf').textContent=!menu.length?'Menu się pisze. Elf już ślini się na zapas.':left===0?'Wszystko zaklepane! Elf odpina pasek o jedną dziurkę.':left<=3?`Jeszcze ${left}. Prawie! Elf trzyma kciuki i widelec.`:taken===0?'Nikt nic nie zaklepał. Elf zaczyna się martwić, że Wigilia będzie o chlebie i opłatku.':`Zostało ${left} potraw bez opiekuna. Elf patrzy wymownie na wujka.`;
+
+  // losowania na żywo
+  const fam=D.rodzina||[];
+  function checks(box,list){$(box).innerHTML=list.map(p=>`<label><input type="checkbox" value="${esc(p.imie)}" checked>${esc(p.imie)}</label>`).join('')||'<span class="hint">Brak osób w pliku z danymi.</span>';}
+  checks('dishPeople',fam.filter(p=>p.plec==='k'));checks('santaPeople',fam.filter(p=>p.plec==='m'));
+  const chosen=box=>[...document.querySelectorAll('#'+box+' input:checked')].map(i=>i.value);
+  async function spin(slot,pool,final){
+    const el=$(slot);el.classList.add('spin');let d=50;
+    for(let i=0;i<20;i++){el.textContent=pool[rnd(pool.length)];await sleep(d);d*=1.12;}
+    el.classList.remove('spin');el.textContent=final;
+  }
+  const DISH=['Gąbka już na Ciebie czeka 🧽','Płyn do naczyń wybrał Ciebie. To zaszczyt.','Gratulacje! Wygrywasz… zlew.','Rękawiczki są w szufladzie. Powodzenia!','Talerze same się nie umyją. Teraz już wiadomo, kto je umyje.','Garnek po bigosie pozdrawia serdecznie.'];
+  $('dishBtn').onclick=async function(){
+    const pool=chosen('dishPeople');
+    if(pool.length<3){toast('Do brygady potrzeba co najmniej 3 osób przy stole.');return;}
+    this.disabled=true;$('dishWin').innerHTML='';$('dishEnd').classList.add('hidden');
+    const order=shuffle(pool.slice()).slice(0,3),lines=shuffle(DISH.slice());
+    for(let i=0;i<3;i++){await spin('dishSlot',pool,order[i]);
+      const li=document.createElement('li');li.innerHTML=`<b>${i+1}. ${esc(order[i])}</b><span>${lines[i]}</span>`;$('dishWin').appendChild(li);await sleep(700);}
+    $('dishSlot').textContent='🧽🧽🧽';confetti();
+    $('dishEnd').textContent='Brygada zmywakowa gotowa! Panowie, nie ma się z czego cieszyć: ktoś musi wynieść śmieci i poskładać stół.';$('dishEnd').classList.remove('hidden');
+    this.disabled=false;this.textContent='🥁 Losuj jeszcze raz (elfy protestują)';
+  };
+  const SANTA=['Broda w szafie, czapka na wieszaku. Do roboty!','Pamiętaj: brzuch można dopchać poduszką.','Dzieci patrzą. Nie śmiej się pod brodą.','Ho ho ho ćwiczymy już teraz. Głębiej, z brzucha!','Worek z prezentami waży więcej, niż myślisz. Rozgrzewka obowiązkowa.'];
+  $('santaBtn').onclick=async function(){
+    const pool=chosen('santaPeople');
+    if(pool.length<1){toast('Zaznacz chociaż jednego kandydata na Mikołaja.');return;}
+    this.disabled=true;$('santaWin').innerHTML='';
+    const w=pool[rnd(pool.length)];await spin('santaSlot',pool,w);
+    const li=document.createElement('li');li.innerHTML=`<b>🎅 Ho ho ho! ${esc(w)} zostaje Mikołajem!</b><span>${pick(SANTA)}</span>`;$('santaWin').appendChild(li);confetti();
+    this.disabled=false;this.textContent='🥁 Losuj jeszcze raz';
+  };
+
+  // quiz
+  const Q=D.quiz||[];let qi=0,qs=0;
+  function quizStart(){qi=0;qs=0;
+    $('quizCard').innerHTML=`<h2>Rodzinny quiz 🧠</h2><p class="sub">${Q.length} pytań. Grajcie razem: ktoś czyta na głos, reszta krzyczy odpowiedzi. Kto krzyczy najgłośniej, ten niekoniecznie wygrywa.</p><button class="block" id="qGo">Zaczynamy!</button>`;
+    $('qGo').onclick=quizQ;}
+  function quizQ(){
+    if(qi>=Q.length){
+      const pct=Q.length?qs/Q.length:0;
+      $('quizCard').innerHTML=`<h2>Koniec quizu! 🏆</h2><p class="qq">${qs} / ${Q.length}</p><p class="sub">${pct===1?'Komplet! Ktoś tu zna rodzinę lepiej niż babcia.':pct>=.6?'Bardzo dobrze! Elfy są pod wrażeniem.':pct>=.3?'Nieźle. Ale przy stole trzeba słuchać uważniej.':'Hmm. Czy Ty na pewno jesteś z tej rodziny? 🤨'}</p><button class="block" id="qAgain">Jeszcze raz</button>`;
+      $('qAgain').onclick=quizStart;confetti();return;}
+    const q=Q[qi];
+    $('quizCard').innerHTML=`<div class="qn">Pytanie ${qi+1} z ${Q.length}</div><div class="qq">${esc(q.pytanie)}</div><div class="opts">${(q.odpowiedzi||[]).map((o,i)=>`<button class="opt" data-i="${i+1}">${esc(o)}</button>`).join('')}</div><div id="qAfter"></div>`;
+    document.querySelectorAll('.opt').forEach(b=>b.onclick=()=>{
+      if($('qAfter').innerHTML)return;
+      const ok=+b.dataset.i===+q.poprawna;if(ok)qs++;
+      document.querySelectorAll('.opt').forEach(x=>{if(+x.dataset.i===+q.poprawna)x.classList.add('good');});
+      if(!ok)b.classList.add('bad');
+      $('qAfter').innerHTML=`<div class="elf"><div class="face">${ok?'🎉':'🙈'}</div><div><b>${ok?'Brawo!':'Pudło!'}</b><span>${esc(q.komentarz||'')}</span></div></div><button class="block" id="qNext">${qi+1<Q.length?'Dalej →':'Wynik!'}</button>`;
+      $('qNext').onclick=()=>{qi++;quizQ();};
+    });
+  }
+  quizStart();
+  document.addEventListener('click',e=>{const b=e.target.closest('[data-go="v-quiz"]');if(b)quizStart();});
+
+  // panel: wczytaj rodzinę z pliku, jeśli pusto
+  if(!state.people.length&&fam.length){state.people=fam.map(p=>({name:p.imie,trait:'',wishes:'',nope:''}));save();}
 
   renderAll();fromHash();
 })();
