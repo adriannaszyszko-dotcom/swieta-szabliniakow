@@ -113,6 +113,13 @@
   .confetti{position:fixed;inset:0;pointer-events:none;z-index:4;overflow:hidden}
   .confetti i{position:absolute;top:-12px;width:8px;height:12px;animation:drop 2.4s ease-in forwards}
   @keyframes drop{to{transform:translateY(110vh) rotate(720deg)}}
+  .checks{display:flex;flex-wrap:wrap;gap:8px;margin-top:4px}
+  .checks label{display:flex;align-items:center;gap:6px;margin:0;font-weight:500;font-size:14px;background:#fff;border:1.5px solid var(--line);border-radius:999px;padding:6px 12px;cursor:pointer}
+  .checks input{width:auto;margin:0;accent-color:var(--red)}
+  .checks label:has(input:checked){border-color:var(--red);background:#fbeeed}
+  .rel{display:flex;align-items:center;justify-content:space-between;gap:8px;background:#f4eee2;border-radius:10px;padding:8px 12px;margin-top:8px;font-size:14px}
+  .rel b{font-weight:600}
+  .relhead{font-family:Fraunces,serif;font-size:20px;font-weight:700;color:var(--green);margin:2px 0 6px}
   .hidden{display:none !important}
 </style>
 </head>
@@ -182,6 +189,7 @@
       <div class="later">
         <div class="who" id="who"></div>
         <div class="role" id="whoRole"></div>
+        <div class="relhead hidden" id="relHead"></div>
         <p class="quip" id="quip"></p>
         <div class="elf" id="intel" style="text-align:left"><div class="face">🕵️</div><div><b>Tajne informacje od elfów</b><span id="intelTxt"></span></div></div>
         <div class="wishes" id="wishBox"></div>
@@ -197,20 +205,30 @@
 
     <div class="card">
       <h2>1. Rodzinka</h2>
-      <p class="sub">Dodaj wszystkich dorosłych (siebie też). Rola i ciekawostka posłużą elfom do złośliwych, ale czułych komentarzy.</p>
+      <p class="sub">Najpierw dodaj wszystkich dorosłych (siebie też). Kto jest kim dla kogo, ustawisz w następnym kroku.</p>
       <label for="pName">Imię</label>
-      <input id="pName" placeholder="np. Babcia Halinka" maxlength="30">
-      <div class="row">
-        <div><label for="pRole">Kim jest w rodzinie</label><select id="pRole"></select></div>
-      </div>
-      <label for="pTrait">Ciekawostka (opcjonalnie)</label>
+      <input id="pName" placeholder="np. Halinka" maxlength="30">
+      <label for="pTrait">Ciekawostka dla elfów (opcjonalnie)</label>
       <input id="pTrait" placeholder="np. kocha wędkowanie, wiecznie marznie" maxlength="80">
       <button class="block" id="addPerson" style="margin-top:12px">Dodaj do rodzinki</button>
       <div id="people"></div>
     </div>
 
     <div class="card">
-      <h2>2. Listy do Mikołaja</h2>
+      <h2>2. Kto jest kim dla kogo</h2>
+      <p class="sub">Np. „Halinka jest babcią dla: Ada, Kasia, Tomek”. Możesz zaznaczyć kilka osób naraz. Elfy wykorzystają to w komentarzach, np. gdy ktoś wylosuje własną teściową.</p>
+      <div class="row">
+        <div><label for="rA">Kto?</label><select id="rA"></select></div>
+        <div><label for="rRole">jest…</label><select id="rRole"></select></div>
+      </div>
+      <label>…dla kogo?</label>
+      <div class="checks" id="rFor"></div>
+      <button class="ghost block" id="addRel" style="margin-top:12px">+ Dodaj powiązanie</button>
+      <div id="relList"></div>
+    </div>
+
+    <div class="card">
+      <h2>3. Listy do Mikołaja</h2>
       <p class="sub">Wklej kody list, które dostałaś od rodziny. Możesz wkleić kilka naraz. Listę możesz też wpisać ręcznie przy danej osobie powyżej.</p>
       <textarea id="listPaste" placeholder="Wklej kody list" style="min-height:80px;font-family:ui-monospace,Menlo,monospace;font-size:13px"></textarea>
       <button class="ghost block" id="importLists" style="margin-top:10px">Dodaj listy</button>
@@ -218,7 +236,7 @@
     </div>
 
     <div class="card">
-      <h2>3. Kto kogo nie może wylosować</h2>
+      <h2>4. Kto kogo nie może wylosować</h2>
       <p class="sub">Np. małżonkowie. Wykluczenie działa w obie strony.</p>
       <div class="row">
         <select id="exA"></select>
@@ -229,7 +247,7 @@
     </div>
 
     <div class="card">
-      <h2>4. Losowanie</h2>
+      <h2>5. Losowanie</h2>
       <p class="sub">Losuj, gdy masz już listy życzeń. Kody zawierają listę wylosowanej osoby, więc listy dodane po losowaniu nie trafią do kodów.</p>
       <div id="orgMsg" class="msg"></div>
       <div id="loader" class="loader hidden"><span class="hat">🎅</span><span id="loaderTxt"></span></div>
@@ -275,32 +293,40 @@
   document.addEventListener('click',e=>{const b=e.target.closest('[data-go]');if(b)show(b.dataset.go);});
 
   // ---------- roles & jokes ----------
+  // n: mianownik, i: narzędnik (jest X dla…), a: biernik (trafiło na…), f: rodzaj żeński
   const ROLES={
-    babcia:{l:'Babcia',q:['Babcia już ma wszystko, łącznie z opinią o Twojej fryzurze.','Babcia i tak powie „nie trzeba było”. Trzeba było. Kup.','Uwaga: prezent dla babci zostanie pokazany wszystkim sąsiadkom. Bez presji.','Babcia ma dla Ciebie trzy słoiki bigosu. Wyrównaj rachunki.']},
-    dziadek:{l:'Dziadek',q:['Dziadek ucieszy się ze wszystkiego, co da się naprawić młotkiem.','Dziadek przeczyta instrukcję dopiero po zepsuciu prezentu. Wybierz coś solidnego.','Dziadek ma już 14 swetrów. Bądź kreatywny/a.','Dziadek powie „a po co to komu”, a potem nie wypuści tego z rąk do Trzech Króli.']},
-    mama:{l:'Mama',q:['Mama powie, że niczego nie potrzebuje. Mama kłamie.','Musisz zaskoczyć osobę, która zawsze wie, co kombinujesz. Powodzenia.','Mama zasłużyła na coś lepszego niż „laurka 2.0”. Chyba że to naprawdę ładna laurka.']},
-    tata:{l:'Tata',q:['Tata chce „świętego spokoju”. Niestety, nie ma go w promocji.','Skarpetki to klasyka. Ale bądźmy lepsi niż klasyka.','Tata i tak najpierw spyta, ile to kosztowało. Nie mów.']},
-    tesciowa:{l:'Teściowa',q:['Teściowa! Poziom trudności: ekspert. Nie kupuj wagi ani książki kucharskiej.','Spokojnie, oddychaj. To tylko teściowa. Kwiaty ratują życie.','Ten prezent będzie omawiany przy stole przez kilka lat. Wybieraj mądrze.']},
-    tesc:{l:'Teść',q:['Teść. Bezpieczna opcja: coś do nalewek. Ryzykowna opcja: wszystko inne.','Teść doceni prezent w milczeniu. To znaczy, że jest dobrze. Chyba.']},
-    wujek:{l:'Wujek',q:['Wujek będzie opowiadał o tym prezencie przez pięć lat. Postaraj się.','Wujek ma odpowiedź na każde pytanie. Teraz Ty masz pytanie: co mu kupić?','Wujek zna najlepszy dowcip na świecie. Niestety opowie go znowu.']},
-    ciocia:{l:'Ciocia',q:['Ciocia zapyta, „kiedy ślub/dziecko/awans”. Kup jej coś, żeby zajęła ręce.','Ciocia może przekazać Twój prezent dalej za rok. Kup coś dobrego, niech krąży z honorem.','Ciocia zawsze przynosi za dużo ciasta. Czas się odwdzięczyć.']},
-    brat:{l:'Brat',q:['Brat. Możesz kupić coś śmiesznego. On Tobie i tak kupiłby coś gorszego.','Znasz go od zawsze. Wykorzystaj tę wiedzę (z miłością).']},
-    siostra:{l:'Siostra',q:['Siostra. Ona pamięta każdy prezent, jaki jej dałeś/aś. Każdy.','Wiesz o niej wszystko. Wykorzystaj to (z miłością).']},
-    maz:{l:'Mąż',q:['Mąż. Wskazówka: „coś do auta” to nie jest odpowiedź na wszystko. Ale często jest.','Mąż powie, że nic nie chce. Mąż już dawno sprawdził ceny tego, co chce.']},
-    zona:{l:'Żona',q:['Żona. Zero presji. Absolutnie zero. (Jest presja).','Żona już wie, co chce. Pytanie, czy Ty wiesz.']},
-    partner:{l:'Partner/ka',q:['Druga połówka! Zero presji. Absolutnie zero. (Jest presja).','To ta osoba, która wie, gdzie chowasz paragony. Ostrożnie.']},
-    szwagier:{l:'Szwagier',q:['Szwagier. Wspólny język: grill, auta, narzekanie na pogodę. Masz od czego zacząć.','Szwagier doceni wszystko, co nie wymaga montażu.']},
-    szwagierka:{l:'Szwagierka',q:['Szwagierka. Delikatna misja dyplomatyczna. Ambasador rodziny w akcji.','Szwagierka ma gust. Ty masz odwagę. Razem damy radę.']},
-    ziec:{l:'Zięć',q:['Zięć. Prezent pokaże, czy przyjęliśmy go do rodziny. (Przyjęliśmy, ale niech się pomartwi).','Zięć się postara przy stole. Ty postaraj się przy prezencie.']},
-    synowa:{l:'Synowa',q:['Synowa. Okazja, żeby wypaść lepiej niż w zeszłym roku. Albo przynajmniej tak samo.','Synowa ma swoje zdanie. Na szczęście elfy też.']},
-    kuzyn:{l:'Kuzyn',q:['Kuzyn. Widzicie się raz w roku i zawsze jest tak samo śmiesznie. Niech prezent też będzie.']},
-    kuzynka:{l:'Kuzynka',q:['Kuzynka. Pamiętasz, jak razem podjadaliście sernik przed kolacją? Ona też. Odpowiednio.']},
-    syn:{l:'Syn',q:['Syn. Nadal najszybciej znika przy stole, gdy trzeba zmywać. Uwzględnij w prezencie.']},
-    corka:{l:'Córka',q:['Córka. Ma swoje zdanie na każdy temat, prezent też oceni. Fachowo.']},
-    inna:{l:'Członek rodziny',q:['Wylosowałeś/aś kogoś, o kim nie wiesz wszystkiego. Czas na śledztwo.','Tajemnicza postać! Czas na misję wywiadowczą.']}
+    babcia:{n:'babcia',i:'babcią',a:'babcię',f:1,q:['Babcia już ma wszystko, łącznie z opinią o Twojej fryzurze.','Babcia i tak powie „nie trzeba było”. Trzeba było. Kup.','Uwaga: prezent dla babci zostanie pokazany wszystkim sąsiadkom. Bez presji.','Babcia ma dla Ciebie trzy słoiki bigosu. Wyrównaj rachunki.']},
+    dziadek:{n:'dziadek',i:'dziadkiem',a:'dziadka',q:['Dziadek ucieszy się ze wszystkiego, co da się naprawić młotkiem.','Dziadek przeczyta instrukcję dopiero po zepsuciu prezentu. Wybierz coś solidnego.','Dziadek ma już 14 swetrów. Bądź kreatywny/a.','Dziadek powie „a po co to komu”, a potem nie wypuści tego z rąk do Trzech Króli.']},
+    mama:{n:'mama',i:'mamą',a:'mamę',f:1,q:['Mama powie, że niczego nie potrzebuje. Mama kłamie.','Musisz zaskoczyć osobę, która zawsze wie, co kombinujesz. Powodzenia.','Mama zasłużyła na coś lepszego niż „laurka 2.0”. Chyba że to naprawdę ładna laurka.']},
+    tata:{n:'tata',i:'tatą',a:'tatę',q:['Tata chce „świętego spokoju”. Niestety, nie ma go w promocji.','Skarpetki to klasyka. Ale bądźmy lepsi niż klasyka.','Tata i tak najpierw spyta, ile to kosztowało. Nie mów.']},
+    tesciowa:{n:'teściowa',i:'teściową',a:'teściową',f:1,q:['Poziom trudności: ekspert. Nie kupuj wagi ani książki kucharskiej.','Spokojnie, oddychaj. To tylko teściowa. Kwiaty ratują życie.','Ten prezent będzie omawiany przy stole przez kilka lat. Wybieraj mądrze.']},
+    tesc:{n:'teść',i:'teściem',a:'teścia',q:['Bezpieczna opcja: coś do nalewek. Ryzykowna opcja: wszystko inne.','Teść doceni prezent w milczeniu. To znaczy, że jest dobrze. Chyba.']},
+    wujek:{n:'wujek',i:'wujkiem',a:'wujka',q:['Wujek będzie opowiadał o tym prezencie przez pięć lat. Postaraj się.','Wujek ma odpowiedź na każde pytanie. Teraz Ty masz pytanie: co mu kupić?','Wujek zna najlepszy dowcip na świecie. Niestety opowie go znowu.']},
+    ciocia:{n:'ciocia',i:'ciocią',a:'ciocię',f:1,q:['Ciocia zapyta, „kiedy ślub/dziecko/awans”. Kup jej coś, żeby zajęła ręce.','Ciocia może przekazać Twój prezent dalej za rok. Kup coś dobrego, niech krąży z honorem.','Ciocia zawsze przynosi za dużo ciasta. Czas się odwdzięczyć.']},
+    brat:{n:'brat',i:'bratem',a:'brata',q:['Brat. Możesz kupić coś śmiesznego. On Tobie i tak kupiłby coś gorszego.','Znasz go od zawsze. Wykorzystaj tę wiedzę (z miłością).']},
+    siostra:{n:'siostra',i:'siostrą',a:'siostrę',f:1,q:['Siostra pamięta każdy prezent, jaki jej dałeś/aś. Każdy.','Wiesz o niej wszystko. Wykorzystaj to (z miłością).']},
+    maz:{n:'mąż',i:'mężem',a:'męża',q:['Wskazówka: „coś do auta” to nie jest odpowiedź na wszystko. Ale często jest.','Mąż powie, że nic nie chce. Mąż już dawno sprawdził ceny tego, co chce.']},
+    zona:{n:'żona',i:'żoną',a:'żonę',f:1,q:['Zero presji. Absolutnie zero. (Jest presja).','Żona już wie, co chce. Pytanie, czy Ty wiesz.']},
+    partner:{n:'partner',i:'partnerem',a:'partnera',q:['Druga połówka! Zero presji. Absolutnie zero. (Jest presja).','To ta osoba, która wie, gdzie chowasz paragony. Ostrożnie.']},
+    partnerka:{n:'partnerka',i:'partnerką',a:'partnerkę',f:1,q:['Druga połówka! Zero presji. Absolutnie zero. (Jest presja).','To ta osoba, która wie, gdzie chowasz paragony. Ostrożnie.']},
+    szwagier:{n:'szwagier',i:'szwagrem',a:'szwagra',q:['Wspólny język: grill, auta, narzekanie na pogodę. Masz od czego zacząć.','Szwagier doceni wszystko, co nie wymaga montażu.']},
+    szwagierka:{n:'szwagierka',i:'szwagierką',a:'szwagierkę',f:1,q:['Delikatna misja dyplomatyczna. Ambasador rodziny w akcji.','Szwagierka ma gust. Ty masz odwagę. Razem damy radę.']},
+    ziec:{n:'zięć',i:'zięciem',a:'zięcia',q:['Prezent pokaże, czy przyjęliśmy go do rodziny. (Przyjęliśmy, ale niech się pomartwi).','Zięć się postara przy stole. Ty postaraj się przy prezencie.']},
+    synowa:{n:'synowa',i:'synową',a:'synową',f:1,q:['Okazja, żeby wypaść lepiej niż w zeszłym roku. Albo przynajmniej tak samo.','Synowa ma swoje zdanie. Na szczęście elfy też.']},
+    syn:{n:'syn',i:'synem',a:'syna',q:['Nadal najszybciej znika przy stole, gdy trzeba zmywać. Uwzględnij w prezencie.','Wychowany/a przez Ciebie albo obok Ciebie. Tak czy inaczej: znasz go.']},
+    corka:{n:'córka',i:'córką',a:'córkę',f:1,q:['Ma swoje zdanie na każdy temat, prezent też oceni. Fachowo.','Córka zawsze wie, co jest modne. Ty wiesz, co jest w budżecie. Kompromis!']},
+    wnuk:{n:'wnuk',i:'wnukiem',a:'wnuka',q:['Wnuk. Do tej pory prezenty szły w drugą stronę. Pora odwrócić bieg historii.','Wnuk już wie, że dostanie coś fajnego. Wnuki zawsze wiedzą.']},
+    wnuczka:{n:'wnuczka',i:'wnuczką',a:'wnuczkę',f:1,q:['Wnuczka. Do tej pory prezenty szły w drugą stronę. Pora odwrócić bieg historii.','Wnuczka i tak przyjedzie z pierogami od babci. Odwdzięcz się.']},
+    kuzyn:{n:'kuzyn',i:'kuzynem',a:'kuzyna',q:['Widzicie się raz w roku i zawsze jest tak samo śmiesznie. Niech prezent też będzie.']},
+    kuzynka:{n:'kuzynka',i:'kuzynką',a:'kuzynkę',f:1,q:['Pamiętasz, jak razem podjadaliście sernik przed kolacją? Ona też. Odpowiednio.']},
+    chrzestny:{n:'chrzestny',i:'chrzestnym',a:'chrzestnego',q:['Chrzestny przez lata dawał Tobie prezenty. Pora spłacić dług z odsetkami.']},
+    chrzestna:{n:'chrzestna',i:'chrzestną',a:'chrzestną',f:1,q:['Chrzestna przez lata dawała Tobie prezenty. Pora spłacić dług z odsetkami.']},
+    inna:{n:'członek rodziny',q:['Wylosowałeś/aś kogoś, o kim nie wiesz wszystkiego. Czas na śledztwo.','Tajemnicza postać! Czas na misję wywiadowczą.']}
   };
+  const DIRECT_HEAD=['🎯 Trafiło na {twojA} {a}!','🎯 Los chciał, że to {twojN} {n}!','🎯 Uwaga, uwaga: {twojN} {n}!'];
+  const INVERSE=['Dla tej osoby jesteś {i}. Reputacja zobowiązuje!','Wylosowałeś/aś kogoś, dla kogo jesteś {i}. Teraz pokaż, że to nie przypadek.','Dla niej/niego jesteś {i}. Prezent musi być na poziomie legendy rodzinnej.'];
   const CLOSERS=['Paragon zachowaj. Tak na wszelki wypadek.','Elfy będą obserwować.','Budżet rozsądny, fantazja nieograniczona.','Pakowanie w gazetę też się liczy. Ledwo.','Pamiętaj: liczy się gest. I żeby nie były to skarpetki.'];
-  const ADDED={babcia:'Dodano babcię. Pierniki zabezpieczone 🍪',dziadek:'Dodano dziadka. Pilot od telewizora już jest jego 📺',tesciowa:'Dodano teściową. Wszyscy prostują plecy 😬',wujek:'Dodano wujka. Dowcipy w drodze 🥁',ciocia:'Dodano ciocię. Pytania o ślub za 3… 2… 1…',tata:'Dodano tatę. „Nie trzeba mi nic” już zapisane.',mama:'Dodano mamę. Ona i tak wiedziała, że ją dodasz.',maz:'Dodano męża. Lista życzeń: „nic”. Klasyka.',zona:'Dodano żonę. Elfy już się boją.',szwagier:'Dodano szwagra. Grill rozpalony mentalnie 🔥'};
+  const ADDED=['Dodano! Rodzina rośnie 🎄','Kolejna osoba w drużynie prezentowej 🎁','Elfy przyjęły zgłoszenie ✅','Dodano. Krzesło przy stole dostawione 🪑','Dodano. Kolejna porcja pierogów potrzebna 🥟'];
 
   function wishLines(t){return t.split(/\n+/).map(s=>s.replace(/^[-•*\d.)\s]+/,'').trim()).filter(Boolean);}
   function elfReview(text,nope){
@@ -375,12 +401,20 @@
     if(!r){m.className='msg err';m.textContent='Ten kod nie działa. Sprawdź, czy skopiowałeś/aś go w całości. Elfy nie przyjmują kodów na raty.';return;}
     if(r.type===T_LIST){m.className='msg err';m.textContent='To jest kod Twojego listu do Mikołaja 📜. Wyślij go organizatorce, a po losowaniu dostaniesz inny kod.';return;}
     m.className='msg';
-    const [giver,giverRole,recv,recvRole,trait,wishes,nope]=r.f;
+    const [giver,,recv,recvRoles,trait,wishes,nope,direct,inverse]=r.f;
     $('hello').textContent='Cześć, '+giver+'!';
     $('who').textContent=recv;
-    const R=ROLES[recvRole]||ROLES.inna;
-    $('whoRole').textContent=recvRole&&recvRole!=='inna'?R.l:'';
-    $('quip').textContent=pick(R.q)+' '+pick(CLOSERS);
+    const roles=(recvRoles||'').split(',').filter(k=>ROLES[k]&&k!=='inna');
+    let head='',quip;
+    if(direct&&ROLES[direct]){const D=ROLES[direct];
+      head=pick(DIRECT_HEAD).replace('{twojA}',D.f?'Twoją':'Twojego').replace('{twojN}',D.f?'Twoja':'Twój').replace('{a}',D.a).replace('{n}',D.n);
+      quip=pick(D.q);}
+    else if(inverse&&ROLES[inverse])quip=pick(INVERSE).replace('{i}',ROLES[inverse].i);
+    else if(roles.length)quip=pick(ROLES[pick(roles)].q);
+    else quip=pick(ROLES.inna.q);
+    $('relHead').textContent=head;$('relHead').classList.toggle('hidden',!head);
+    $('whoRole').textContent=roles.length?'W rodzinie: '+[...new Set(roles.map(k=>ROLES[k].n))].join(' · '):'';
+    $('quip').textContent=quip+' '+pick(CLOSERS);
     if(trait){$('intel').classList.remove('hidden');$('intelTxt').textContent=trait.charAt(0).toUpperCase()+trait.slice(1)+'. Wykorzystaj to.';}
     else $('intel').classList.add('hidden');
     const wl=wishLines(wishes||'');
@@ -399,24 +433,25 @@
 
   // ---------- organizer ----------
   const store={get(){try{return JSON.parse(localStorage.getItem('szabliniacy-v2')||'null')}catch(e){return null}},set(v){try{localStorage.setItem('szabliniacy-v2',JSON.stringify(v))}catch(e){}}};
-  let state=store.get()||{people:[],excl:[]};
+  let state=store.get()||{people:[],excl:[],rels:[]};
+  if(!state.rels)state.rels=[];
   if(!state.people.length){try{const old=JSON.parse(localStorage.getItem('losowanie-v1')||'null');if(old&&old.names){state.people=old.names.map(n=>({name:n,role:'inna',trait:'',wishes:'',nope:''}));state.excl=old.excl||[];}}catch(e){}}
   const save=()=>store.set(state);
-  $('pRole').innerHTML=Object.entries(ROLES).map(([k,v])=>`<option value="${k}"${k==='inna'?' selected':''}>${v.l}</option>`).join('');
+  $('rRole').innerHTML='<option value="">wybierz…</option>'+Object.entries(ROLES).filter(([k])=>k!=='inna').map(([k,v])=>`<option value="${k}">${v.i}</option>`).join('');
 
   function renderPeople(){
     const box=$('people');box.innerHTML='';
     state.people.forEach((p,i)=>{
       const d=document.createElement('div');d.className='person';
       const wl=wishLines(p.wishes||'');
-      d.innerHTML=`<div class="top"><div><b>${esc(p.name)}</b><span class="tag">${esc((ROLES[p.role]||ROLES.inna).l)}</span><span class="tag ${wl.length?'ok':'no'}">${wl.length?'📜 list: '+wl.length:'brak listu'}</span></div></div>
+      d.innerHTML=`<div class="top"><div><b>${esc(p.name)}</b>${relTags(p.name)}<span class="tag ${wl.length?'ok':'no'}">${wl.length?'📜 list: '+wl.length:'brak listu'}</span></div></div>
         ${p.trait?`<div class="meta">💡 ${esc(p.trait)}</div>`:''}
         <details><summary>Edytuj listę życzeń ręcznie</summary>
           <textarea data-i="${i}" data-k="wishes" placeholder="Życzenia, każde w nowej linii">${esc(p.wishes||'')}</textarea>
           <input data-i="${i}" data-k="nope" placeholder="Czego nie chce" value="${esc(p.nope||'')}" style="margin-top:8px;font-size:14px">
         </details>`;
       const x=document.createElement('button');x.className='x';x.textContent='×';x.title='Usuń';
-      x.onclick=()=>{const n=p.name;state.excl=state.excl.filter(e=>e[0]!==n&&e[1]!==n);state.people.splice(i,1);save();renderAll();};
+      x.onclick=()=>{const n=p.name;state.excl=state.excl.filter(e=>e[0]!==n&&e[1]!==n);state.rels=state.rels.filter(e=>e.a!==n&&e.b!==n);state.people.splice(i,1);save();renderAll();};
       d.querySelector('.top').appendChild(x);box.appendChild(d);
     });
     box.querySelectorAll('[data-k]').forEach(el=>el.addEventListener('change',()=>{state.people[+el.dataset.i][el.dataset.k]=el.value;save();renderAll();}));
@@ -428,17 +463,41 @@
     state.excl.forEach((p,i)=>{const d=document.createElement('div');d.className='excl';d.innerHTML=`<span>${esc(p[0])} ✕ ${esc(p[1])}</span>`;
       const x=document.createElement('button');x.textContent='×';x.onclick=()=>{state.excl.splice(i,1);save();renderEx();};d.appendChild(x);$('exList').appendChild(d);});
   }
-  function renderAll(){renderPeople();renderEx();}
+  function relTags(n){const ks=[...new Set(state.rels.filter(r=>r.a===n).map(r=>r.k))];return ks.map(k=>`<span class="tag">${esc(ROLES[k].n)}</span>`).join('');}
+  function renderRels(){
+    const keepA=$('rA').value,checked=new Set([...document.querySelectorAll('#rFor input:checked')].map(i=>i.value));
+    $('rA').innerHTML='<option value="">wybierz…</option>'+state.people.map(p=>`<option>${esc(p.name)}</option>`).join('');
+    if(state.people.some(p=>p.name===keepA))$('rA').value=keepA;
+    $('rFor').innerHTML=state.people.length?state.people.map(p=>`<label><input type="checkbox" value="${esc(p.name)}"${checked.has(p.name)?' checked':''}>${esc(p.name)}</label>`).join(''):'<span class="hint">Najpierw dodaj osoby w kroku 1.</span>';
+    const groups={};state.rels.forEach(r=>{const key=r.a+'\u0001'+r.k;(groups[key]=groups[key]||[]).push(r.b);});
+    $('relList').innerHTML='';
+    Object.entries(groups).forEach(([key,bs])=>{const [a,k]=key.split('\u0001');
+      const d=document.createElement('div');d.className='rel';
+      d.innerHTML=`<span><b>${esc(a)}</b> jest ${esc(ROLES[k].i)} dla: ${bs.map(esc).join(', ')}</span>`;
+      const x=document.createElement('button');x.className='x';x.textContent='×';x.title='Usuń';
+      x.onclick=()=>{state.rels=state.rels.filter(r=>!(r.a===a&&r.k===k));save();renderAll();};
+      d.appendChild(x);$('relList').appendChild(d);});
+  }
+  $('addRel').onclick=()=>{
+    const a=$('rA').value,k=$('rRole').value,bs=[...document.querySelectorAll('#rFor input:checked')].map(i=>i.value).filter(b=>b!==a);
+    if(!a){toast('Wybierz, o kogo chodzi.');return;}
+    if(!k){toast('Wybierz, kim jest ta osoba.');return;}
+    if(!bs.length){toast('Zaznacz, dla kogo. (Sam/a dla siebie się nie liczy 😉)');return;}
+    bs.forEach(b=>{state.rels=state.rels.filter(r=>!(r.a===a&&r.b===b));state.rels.push({a,k,b});});
+    document.querySelectorAll('#rFor input').forEach(i=>i.checked=false);$('rRole').value='';
+    save();renderAll();
+    const R=ROLES[k];toast(pick([`Zapisano: ${a} jest ${R.i} dla ${bs.length} os. Elfy notują 📝`,`${a} jako ${R.n}? Elfy już mają żarty w zanadrzu 😏`,'Drzewo genealogiczne rośnie 🌳']));
+  };
+  function renderAll(){renderPeople();renderRels();renderEx();}
   function orgErr(t){$('orgMsg').className='msg err';$('orgMsg').textContent=t;}
   function orgClear(){$('orgMsg').className='msg';}
 
   function addPerson(){
     const name=$('pName').value.trim().replace(/\u0001/g,'');if(!name)return;
     if(state.people.some(p=>p.name.toLowerCase()===name.toLowerCase())){toast('Ta osoba już jest. Klonowanie wujków jest zakazane 🧬');return;}
-    const role=$('pRole').value;
-    state.people.push({name,role,trait:$('pTrait').value.trim().replace(/\u0001/g,''),wishes:'',nope:''});
-    $('pName').value='';$('pTrait').value='';$('pRole').value='inna';$('pName').focus();
-    save();renderAll();toast(ADDED[role]||pick(['Dodano! Rodzina rośnie 🎄','Kolejna osoba w drużynie prezentowej 🎁','Elfy przyjęły zgłoszenie ✅']));
+    state.people.push({name,trait:$('pTrait').value.trim().replace(/\u0001/g,''),wishes:'',nope:''});
+    $('pName').value='';$('pTrait').value='';$('pName').focus();
+    save();renderAll();toast(pick(ADDED));
   }
   $('addPerson').onclick=addPerson;
   $('pName').addEventListener('keydown',e=>{if(e.key==='Enter')$('pTrait').focus();});
@@ -498,7 +557,10 @@
     const by=Object.fromEntries(state.people.map(p=>[p.name,p]));
     codes=[];
     for(const g of names){const G=by[g],Rc=by[res[g]];
-      codes.push({g,code:await encode(T_ASSIGN,[G.name,G.role,Rc.name,Rc.role,Rc.trait||'',Rc.wishes||'',Rc.nope||''])});}
+      const roles=[...new Set(state.rels.filter(r=>r.a===Rc.name).map(r=>r.k))].join(',');
+      const dir=(state.rels.find(r=>r.a===Rc.name&&r.b===G.name)||{}).k||'';
+      const inv=dir?'':((state.rels.find(r=>r.a===G.name&&r.b===Rc.name)||{}).k||'');
+      codes.push({g,code:await encode(T_ASSIGN,[G.name,'',Rc.name,roles,Rc.trait||'',Rc.wishes||'',Rc.nope||'',dir,inv])});}
     $('loader').classList.add('hidden');$('drawBtn').disabled=false;$('drawBtn').textContent='🎲 Losuj ponownie';
     $('codes').innerHTML=missing.length?`<div class="note" style="margin-top:0">📭 Bez listy: ${missing.map(esc).join(', ')}. Ich Mikołaje będą musieli improwizować.</div>`:'';
     codes.forEach(x=>{const d=document.createElement('div');d.className='person';
