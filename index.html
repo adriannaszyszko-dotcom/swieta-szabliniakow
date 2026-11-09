@@ -957,7 +957,7 @@
     $('advElf').textContent=pick(['Elf płacze ze wzruszenia. I trochę ze śmiechu.','Te fryzury! Te swetry! Te czasy!','Kto zgadnie pierwszy, wybiera pierwszy kawałek sernika.','Pokaż babci Basi, ona zna całą historię.','Wyślijcie to na grupę, niech wszyscy zgadują!']);
     $('advModal').classList.remove('hidden');confetti();
   }
-  function openFull(src){.innerHTML='';$('fullImg').src=src;$('fullView').classList.remove('hidden');document.body.style.overflow='hidden';}
+  function openFull(src){$('confetti').innerHTML='';$('fullImg').src=src;$('fullView').classList.remove('hidden');document.body.style.overflow='hidden';}
   function closeFull(){$('fullView').classList.add('hidden');document.body.style.overflow='';}
   $('advFull').onclick=()=>{const im=$('advImg').querySelector('img');if(im)openFull(im.getAttribute('src'));};
   $('fullView').onclick=e=>{if(e.target.id!=='fullImg'||e.detail>0)closeFull();};
