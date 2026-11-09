@@ -54,6 +54,36 @@ window.DANE = {
   // CO KTO PRZYNOSI — lista jest w pliku jedzenie.json, edytujesz ją w Panelu organizatorki
   repo: 'adriannaszyszko-dotcom/swieta-szabliniakow',
 
+  // KALENDARZ ADWENTOWY — 24 okienka (kolejno 1–24 grudnia)
+  // zdjecie: ścieżka do pliku, np. 'zdjecia/01.jpg'  (puste = obrazek zastępczy)
+  // pytanie: np. 'Kto to jest i ile ma tu lat?'   odpowiedz: odkrywana po kliknięciu
+  adwent: [
+    { zdjecie: '', pytanie: '', odpowiedz: '' }, // 1
+    { zdjecie: '', pytanie: '', odpowiedz: '' }, // 2
+    { zdjecie: '', pytanie: '', odpowiedz: '' }, // 3
+    { zdjecie: '', pytanie: '', odpowiedz: '' }, // 4
+    { zdjecie: '', pytanie: '', odpowiedz: '' }, // 5
+    { zdjecie: '', pytanie: '', odpowiedz: '' }, // 6
+    { zdjecie: '', pytanie: '', odpowiedz: '' }, // 7
+    { zdjecie: '', pytanie: '', odpowiedz: '' }, // 8
+    { zdjecie: '', pytanie: '', odpowiedz: '' }, // 9
+    { zdjecie: '', pytanie: '', odpowiedz: '' }, // 10
+    { zdjecie: '', pytanie: '', odpowiedz: '' }, // 11
+    { zdjecie: '', pytanie: '', odpowiedz: '' }, // 12
+    { zdjecie: '', pytanie: '', odpowiedz: '' }, // 13
+    { zdjecie: '', pytanie: '', odpowiedz: '' }, // 14
+    { zdjecie: '', pytanie: '', odpowiedz: '' }, // 15
+    { zdjecie: '', pytanie: '', odpowiedz: '' }, // 16
+    { zdjecie: '', pytanie: '', odpowiedz: '' }, // 17
+    { zdjecie: '', pytanie: '', odpowiedz: '' }, // 18
+    { zdjecie: '', pytanie: '', odpowiedz: '' }, // 19
+    { zdjecie: '', pytanie: '', odpowiedz: '' }, // 20
+    { zdjecie: '', pytanie: '', odpowiedz: '' }, // 21
+    { zdjecie: '', pytanie: '', odpowiedz: '' }, // 22
+    { zdjecie: '', pytanie: '', odpowiedz: '' }, // 23
+    { zdjecie: '', pytanie: '', odpowiedz: '' }, // 24
+  ],
+
   // QUIZ — odpowiedzi: lista możliwości, poprawna: numer poprawnej odpowiedzi (liczone od 1)
   quiz: [
     { pytanie: 'Ile potraw tradycyjnie powinno być na wigilijnym stole?',

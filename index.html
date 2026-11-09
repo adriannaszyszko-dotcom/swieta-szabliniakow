@@ -172,6 +172,20 @@
   .budget b{display:block;font-family:Fraunces,serif;font-size:20px;color:var(--red)}
   .btnlink{display:block;text-align:center;text-decoration:none;font-weight:600;font-size:15px;border-radius:10px;padding:14px 16px;background:var(--red);color:#fff;margin-top:18px}
   .btnlink:hover{background:var(--red2)}
+  .adv{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+  .door{aspect-ratio:1;border-radius:10px;border:0;padding:0;font-family:Fraunces,serif;font-weight:900;font-size:24px;color:#fff7e8;position:relative;overflow:hidden;background:var(--red)}
+  .door:nth-child(3n){background:var(--green)}.door:nth-child(5n){background:#c08a2e}.door:nth-child(7n){background:#7a2a2a}
+  .door:hover{filter:brightness(1.08)}
+  .door.locked{opacity:.55}
+  .door.locked:after{content:"🔒";position:absolute;right:4px;bottom:2px;font-size:12px}
+  .door.today{outline:3px solid var(--gold);animation:wiggle 2.4s ease-in-out infinite}
+  .door.seen{background-size:cover;background-position:center}
+  .door.seen span{background:rgba(0,0,0,.45);border-radius:6px;padding:0 6px;font-size:16px}
+  .modal{position:fixed;inset:0;background:rgba(10,25,20,.75);z-index:6;display:flex;align-items:center;justify-content:center;padding:16px}
+  .mbox{background:var(--card);border-radius:18px;padding:18px;max-width:520px;width:100%;max-height:92vh;overflow:auto;position:relative;text-align:center}
+  .mclose{position:absolute;right:10px;top:8px;font-size:26px}
+  .mday{font-family:Fraunces,serif;font-weight:900;color:var(--red);font-size:22px;margin-bottom:10px}
+  .mimg img,.mimg svg{width:100%;border-radius:12px;display:block}
   .hidden{display:none !important}
 </style>
 </head>
@@ -209,7 +223,8 @@
         <button class="tile" data-go="v-menu"><span class="ico">🥟</span>Co kto przynosi</button>
         <button class="tile" data-go="v-dish"><span class="ico">🧽</span>Kto zmywa?</button>
         <button class="tile" data-go="v-santa"><span class="ico">🎅</span>Kto zostaje Mikołajem?</button>
-        <button class="tile wide" data-go="v-quiz"><span class="ico">🧠</span>Rodzinny quiz</button>
+        <button class="tile" data-go="v-quiz"><span class="ico">🧠</span>Rodzinny quiz</button>
+        <button class="tile" data-go="v-advent"><span class="ico">📅</span>Kalendarz adwentowy</button>
       </div>
     </div>
     <button class="orglink" data-go="v-org">🎄 Panel organizatorki</button>
@@ -265,6 +280,25 @@
       <ul class="winners" id="santaWin"></ul>
     </div>
   </section>
+
+  <!-- ADWENT -->
+  <section id="v-advent" class="hidden">
+    <button class="back" data-go="v-start">← Wróć</button>
+    <div class="card">
+      <h2>Kalendarz adwentowy 📅</h2>
+      <p class="sub" id="advSub">Codziennie od 1 do 24 grudnia otwiera się jedno okienko ze starym rodzinnym zdjęciem.</p>
+      <div class="adv" id="advGrid"></div>
+    </div>
+  </section>
+  <div class="modal hidden" id="advModal"><div class="mbox">
+    <button class="x mclose" id="advClose">×</button>
+    <div class="mday" id="advDay"></div>
+    <div class="mimg" id="advImg"></div>
+    <p class="qq" id="advQ" style="font-size:19px"></p>
+    <button class="ghost block hidden" id="advReveal" style="margin-top:6px">🔍 Pokaż odpowiedź</button>
+    <p class="quip hidden" id="advA"></p>
+    <p class="sub" id="advElf" style="margin:10px 0 0"></p>
+  </div></div>
 
   <!-- QUIZ -->
   <section id="v-quiz" class="hidden">
@@ -437,7 +471,7 @@
   ]);
 
   // ---------- views ----------
-  const views=['v-start','v-list','v-code','v-reveal','v-org','v-plan','v-menu','v-dish','v-santa','v-quiz'];
+  const views=['v-start','v-list','v-code','v-reveal','v-org','v-plan','v-menu','v-dish','v-santa','v-quiz','v-advent'];
   function show(id){views.forEach(v=>$(v).classList.toggle('hidden',v!==id));window.scrollTo(0,0);}
   document.addEventListener('click',e=>{const b=e.target.closest('[data-go]');if(b)show(b.dataset.go);});
 
@@ -882,6 +916,45 @@
   }
   quizStart();
   document.addEventListener('click',e=>{const b=e.target.closest('[data-go="v-quiz"]');if(b)quizStart();});
+
+  // kalendarz adwentowy
+  const ADV=(D.adwent||[]).slice(0,24);while(ADV.length<24)ADV.push({});
+  const ORDER=[7,19,2,13,22,5,16,10,1,24,11,18,4,21,9,15,3,23,12,6,20,14,8,17];
+  const ADVKEY='szabliniacy-adwent';
+  const seen=()=>{try{return JSON.parse(localStorage.getItem(ADVKEY)||'[]')}catch(e){return []}};
+  const markSeen=n=>{try{const a=seen();if(!a.includes(n)){a.push(n);localStorage.setItem(ADVKEY,JSON.stringify(a));}}catch(e){}};
+  const preview=()=>location.hash==='#podglad-adwent';
+  const advYear=target.getFullYear();
+  function opensIn(n){const open=new Date(advYear,11,n,0,0,0);return Math.ceil((open-new Date())/86400000);}
+  const isOpen=n=>preview()||new Date()>=new Date(advYear,11,n,0,0,0);
+  function placeholder(n){return `<svg viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg"><rect width="400" height="300" fill="#efe7d6"/><text x="200" y="135" font-size="64" text-anchor="middle">📷</text><text x="200" y="190" font-family="Georgia,serif" font-size="22" fill="#6b756f" text-anchor="middle">Tu będzie zdjęcie nr ${n}</text></svg>`;}
+  function renderAdv(){
+    const sn=seen(),now=new Date(),todayN=now.getMonth()===11&&now.getFullYear()===advYear?now.getDate():0;
+    $('advSub').textContent=preview()?'👀 Podgląd organizatorki: wszystkie okienka są otwarte (tylko w tym linku).'
+      :now<new Date(advYear,11,1)?`Startujemy 1 grudnia! Za ${opensIn(1)} dni otworzy się pierwsze okienko ze starym rodzinnym zdjęciem.`
+      :todayN&&todayN<=24?`Dziś jest ${todayN} grudnia. Okienko nr ${todayN} czeka! ✨`:'Wszystkie okienka otwarte. Wspomnień czar! ✨';
+    $('advGrid').innerHTML=ORDER.map(n=>{const o=isOpen(n),z=ADV[n-1].zdjecie;
+      const st=o&&sn.includes(n)&&z?` style="background-image:url('${encodeURI(z)}')"`:'';
+      return `<button class="door${o?'':' locked'}${n===todayN?' today':''}${st?' seen':''}" data-n="${n}"${st}><span>${n}</span></button>`;}).join('');
+    document.querySelectorAll('.door').forEach(b=>b.onclick=()=>openDoor(+b.dataset.n));
+  }
+  function openDoor(n){
+    if(!isOpen(n)){const d=opensIn(n);toast(pick([`Cierpliwości! Okienko nr ${n} otworzy się za ${d} ${d===1?'dzień':'dni'} 🔒`,`Elf stoi na straży okienka nr ${n}. Jeszcze ${d} ${d===1?'dzień':'dni'}!`,`Podglądanie zabronione! Elfy wszystko widzą 👀`]));return;}
+    const it=ADV[n-1];markSeen(n);
+    $('advDay').textContent=`${n} grudnia`;
+    $('advImg').innerHTML=it.zdjecie?`<img src="${esc(it.zdjecie)}" alt="Zdjęcie z okienka ${n}">`:placeholder(n);
+    $('advQ').textContent=it.pytanie||'';$('advQ').classList.toggle('hidden',!it.pytanie);
+    $('advA').textContent=it.odpowiedz||'';$('advA').classList.add('hidden');
+    $('advReveal').classList.toggle('hidden',!it.odpowiedz);
+    $('advElf').textContent=pick(['Elf płacze ze wzruszenia. I trochę ze śmiechu.','Te fryzury! Te swetry! Te czasy!','Kto zgadnie pierwszy, wybiera pierwszy kawałek sernika.','Pokaż babci Basi, ona zna całą historię.','Wyślijcie to na grupę, niech wszyscy zgadują!']);
+    $('advModal').classList.remove('hidden');confetti();
+  }
+  $('advReveal').onclick=function(){$('advA').classList.remove('hidden');this.classList.add('hidden');};
+  $('advClose').onclick=()=>{$('advModal').classList.add('hidden');renderAdv();};
+  $('advModal').onclick=e=>{if(e.target.id==='advModal'){$('advModal').classList.add('hidden');renderAdv();}};
+  renderAdv();
+  window.addEventListener('hashchange',()=>{if(preview()){show('v-advent');renderAdv();}});
+  if(preview())show('v-advent');
 
   // panel: wczytaj rodzinę z pliku, jeśli pusto
   const untouched=state.people.every(p=>!p.wishes&&!p.trait)&&!(state.rels||[]).length&&!(state.excl||[]).length;
