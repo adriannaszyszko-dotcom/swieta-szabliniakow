@@ -185,7 +185,11 @@
   .mbox{background:var(--card);border-radius:18px;padding:18px;max-width:520px;width:100%;max-height:92vh;overflow:auto;position:relative;text-align:center}
   .mclose{position:absolute;right:10px;top:8px;font-size:26px}
   .mday{font-family:Fraunces,serif;font-weight:900;color:var(--red);font-size:22px;margin-bottom:10px}
-  .mimg img,.mimg svg{width:100%;border-radius:12px;display:block}
+  .mimg img,.mimg svg{width:100%;max-height:60vh;object-fit:contain;border-radius:12px;display:block;background:#1d2a25;cursor:zoom-in}
+  .full{position:fixed;inset:0;background:#000;z-index:8;display:flex;align-items:center;justify-content:center}
+  .full img{max-width:100vw;max-height:100vh;width:auto;height:auto;object-fit:contain}
+  .full .fx{position:fixed;top:max(12px,env(safe-area-inset-top));right:12px;background:rgba(255,255,255,.18);color:#fff;font-size:24px;line-height:1;border-radius:999px;width:44px;height:44px;padding:0}
+  .full .fhint{position:fixed;bottom:max(14px,env(safe-area-inset-bottom));left:0;right:0;text-align:center;color:rgba(255,255,255,.7);font-size:13px}
   .hidden{display:none !important}
 </style>
 </head>
@@ -294,11 +298,14 @@
     <button class="x mclose" id="advClose">×</button>
     <div class="mday" id="advDay"></div>
     <div class="mimg" id="advImg"></div>
+    <button class="ghost block hidden" id="advFull" style="margin-top:10px">⛶ Zobacz na pełnym ekranie</button>
     <p class="qq" id="advQ" style="font-size:19px"></p>
     <button class="ghost block hidden" id="advReveal" style="margin-top:6px">🔍 Pokaż odpowiedź</button>
     <p class="quip hidden" id="advA"></p>
     <p class="sub" id="advElf" style="margin:10px 0 0"></p>
   </div></div>
+
+  <div class="full hidden" id="fullView"><img id="fullImg" alt=""><button class="fx" id="fullClose">×</button><div class="fhint">Dotknij, żeby zamknąć · rozsuń palce, żeby przybliżyć</div></div>
 
   <!-- QUIZ -->
   <section id="v-quiz" class="hidden">
@@ -943,12 +950,18 @@
     const it=ADV[n-1];markSeen(n);
     $('advDay').textContent=`${n} grudnia`;
     $('advImg').innerHTML=it.zdjecie?`<img src="${esc(it.zdjecie)}" alt="Zdjęcie z okienka ${n}">`:placeholder(n);
+    $('advFull').classList.toggle('hidden',!it.zdjecie);const im=$('advImg').querySelector('img');if(im)im.onclick=()=>openFull(it.zdjecie);
     $('advQ').textContent=it.pytanie||'';$('advQ').classList.toggle('hidden',!it.pytanie);
     $('advA').textContent=it.odpowiedz||'';$('advA').classList.add('hidden');
     $('advReveal').classList.toggle('hidden',!it.odpowiedz);
     $('advElf').textContent=pick(['Elf płacze ze wzruszenia. I trochę ze śmiechu.','Te fryzury! Te swetry! Te czasy!','Kto zgadnie pierwszy, wybiera pierwszy kawałek sernika.','Pokaż babci Basi, ona zna całą historię.','Wyślijcie to na grupę, niech wszyscy zgadują!']);
     $('advModal').classList.remove('hidden');confetti();
   }
+  function openFull(src){.innerHTML='';$('fullImg').src=src;$('fullView').classList.remove('hidden');document.body.style.overflow='hidden';}
+  function closeFull(){$('fullView').classList.add('hidden');document.body.style.overflow='';}
+  $('advFull').onclick=()=>{const im=$('advImg').querySelector('img');if(im)openFull(im.getAttribute('src'));};
+  $('fullView').onclick=e=>{if(e.target.id!=='fullImg'||e.detail>0)closeFull();};
+  document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeFull();$('advModal').classList.add('hidden');}});
   $('advReveal').onclick=function(){$('advA').classList.remove('hidden');this.classList.add('hidden');};
   $('advClose').onclick=()=>{$('advModal').classList.add('hidden');renderAdv();};
   $('advModal').onclick=e=>{if(e.target.id==='advModal'){$('advModal').classList.add('hidden');renderAdv();}};
