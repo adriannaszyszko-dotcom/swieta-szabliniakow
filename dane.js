@@ -58,26 +58,26 @@ window.DANE = {
   // zdjecie: ścieżka do pliku, np. 'zdjecia/01.jpg'  (puste = obrazek zastępczy)
   // pytanie: np. 'Kto to jest i ile ma tu lat?'   odpowiedz: odkrywana po kliknięciu
   adwent: [
-    { zdjecie: '', pytanie: '', odpowiedz: '' }, // 1
-    { zdjecie: '', pytanie: '', odpowiedz: '' }, // 2
-    { zdjecie: '', pytanie: '', odpowiedz: '' }, // 3
-    { zdjecie: '', pytanie: '', odpowiedz: '' }, // 4
-    { zdjecie: '', pytanie: '', odpowiedz: '' }, // 5
-    { zdjecie: '', pytanie: '', odpowiedz: '' }, // 6
-    { zdjecie: '', pytanie: '', odpowiedz: '' }, // 7
-    { zdjecie: '', pytanie: '', odpowiedz: '' }, // 8
-    { zdjecie: '', pytanie: '', odpowiedz: '' }, // 9
-    { zdjecie: '', pytanie: '', odpowiedz: '' }, // 10
-    { zdjecie: '', pytanie: '', odpowiedz: '' }, // 11
-    { zdjecie: '', pytanie: '', odpowiedz: '' }, // 12
-    { zdjecie: '', pytanie: '', odpowiedz: '' }, // 13
-    { zdjecie: '', pytanie: '', odpowiedz: '' }, // 14
-    { zdjecie: '', pytanie: '', odpowiedz: '' }, // 15
-    { zdjecie: '', pytanie: '', odpowiedz: '' }, // 16
-    { zdjecie: '', pytanie: '', odpowiedz: '' }, // 17
-    { zdjecie: '', pytanie: '', odpowiedz: '' }, // 18
-    { zdjecie: '', pytanie: '', odpowiedz: '' }, // 19
-    { zdjecie: '', pytanie: '', odpowiedz: '' }, // 20
+    { zdjecie: 'zdjecia/01.jpg', pytanie: '', odpowiedz: '' }, // 1
+    { zdjecie: 'zdjecia/02.jpg', pytanie: '', odpowiedz: '' }, // 2
+    { zdjecie: 'zdjecia/03.jpg', pytanie: '', odpowiedz: '' }, // 3
+    { zdjecie: 'zdjecia/04.jpg', pytanie: '', odpowiedz: '' }, // 4
+    { zdjecie: 'zdjecia/05.jpg', pytanie: '', odpowiedz: '' }, // 5
+    { zdjecie: 'zdjecia/06.jpg', pytanie: '', odpowiedz: '' }, // 6
+    { zdjecie: 'zdjecia/07.jpg', pytanie: '', odpowiedz: '' }, // 7
+    { zdjecie: 'zdjecia/08.jpg', pytanie: '', odpowiedz: '' }, // 8
+    { zdjecie: 'zdjecia/09.jpg', pytanie: '', odpowiedz: '' }, // 9
+    { zdjecie: 'zdjecia/10.jpg', pytanie: '', odpowiedz: '' }, // 10
+    { zdjecie: 'zdjecia/11.jpg', pytanie: '', odpowiedz: '' }, // 11
+    { zdjecie: 'zdjecia/12.jpg', pytanie: '', odpowiedz: '' }, // 12
+    { zdjecie: 'zdjecia/13.jpg', pytanie: '', odpowiedz: '' }, // 13
+    { zdjecie: 'zdjecia/14.jpg', pytanie: '', odpowiedz: '' }, // 14
+    { zdjecie: 'zdjecia/15.jpg', pytanie: '', odpowiedz: '' }, // 15
+    { zdjecie: 'zdjecia/16.jpg', pytanie: '', odpowiedz: '' }, // 16
+    { zdjecie: 'zdjecia/17.jpg', pytanie: '', odpowiedz: '' }, // 17
+    { zdjecie: 'zdjecia/18.jpg', pytanie: '', odpowiedz: '' }, // 18
+    { zdjecie: 'zdjecia/19.jpg', pytanie: '', odpowiedz: '' }, // 19
+    { zdjecie: 'zdjecia/20.jpg', pytanie: '', odpowiedz: '' }, // 20
     { zdjecie: '', pytanie: '', odpowiedz: '' }, // 21
     { zdjecie: '', pytanie: '', odpowiedz: '' }, // 22
     { zdjecie: '', pytanie: '', odpowiedz: '' }, // 23
