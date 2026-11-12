@@ -78,10 +78,10 @@ window.DANE = {
     { zdjecie: 'zdjecia/18.jpg', pytanie: '', odpowiedz: '' }, // 18
     { zdjecie: 'zdjecia/19.jpg', pytanie: '', odpowiedz: '' }, // 19
     { zdjecie: 'zdjecia/20.jpg', pytanie: '', odpowiedz: '' }, // 20
-    { zdjecie: '', pytanie: '', odpowiedz: '' }, // 21
-    { zdjecie: '', pytanie: '', odpowiedz: '' }, // 22
-    { zdjecie: '', pytanie: '', odpowiedz: '' }, // 23
-    { zdjecie: '', pytanie: '', odpowiedz: '' }, // 24
+    { zdjecie: 'zdjecia/21.jpg', pytanie: '', odpowiedz: '' }, // 21
+    { zdjecie: 'zdjecia/22.jpg', pytanie: '', odpowiedz: '' }, // 22
+    { zdjecie: 'zdjecia/23.jpg', pytanie: '', odpowiedz: '' }, // 23
+    { zdjecie: 'zdjecia/24.jpg', pytanie: '', odpowiedz: '' }, // 24
   ],
 
   // QUIZ — odpowiedzi: lista możliwości, poprawna: numer poprawnej odpowiedzi (liczone od 1)
